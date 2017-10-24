@@ -12,4 +12,9 @@ MySQL username/password combo will have to be:
 user=root password=root
 to work unmodified - If you plan on changing the
 values in Login.java, see the KPTODO comment
+
+Update: I cloned the updated repo into a different
+workspace and it worked fine. For reference:
+https://github.com/collab-uniba/socialcde4eclipse/wiki/How-to-import-a-GitHub-project-into-Eclipse
+
  
