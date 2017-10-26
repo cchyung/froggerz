@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS LoginInformation;
-CREATE DATABASE LoginInformation;
+DROP DATABASE IF EXISTS logininformation;
+CREATE DATABASE logininformation;
 
-USE LoginInformation;
+USE logininformation;
 
 CREATE TABLE Users (
     username VARCHAR(50) NOT NULL,
