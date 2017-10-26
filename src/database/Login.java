@@ -82,7 +82,9 @@ public class Login extends HttpServlet
 			}
 		}
 
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/DisplayLoginTest.jsp");
-		dispatcher.forward(request, response);
+		request.getRequestDispatcher("/userInfo.jsp").forward(request, response);
+		
+//		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/test.jsp");
+//		dispatcher.forward(request, response);
 	}
 }
