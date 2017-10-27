@@ -73,3 +73,13 @@ gradle-app.setting
 ## OS Specific
 .DS_Store
 Thumbs.db
+
+## Settings
+.project
+.settings/
+core/.classpath
+core/.project
+core/.settings/
+html/.classpath
+html/.project
+html/.settings/
