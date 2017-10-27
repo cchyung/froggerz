@@ -1,0 +1,67 @@
+/* CSS Document */
+.login-page {
+  width: 40%;
+  padding: 8% 0 0;
+  margin: auto; }
+
+.forms {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  max-width: 360px;
+  margin: 0 auto 100px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px rgba(0, 0, 0, 0.24); }
+  .forms input {
+    outline: 0;
+    background: #e0e0e0;
+    width: 100%;
+    border: 0;
+    margin: 0 0 15px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-size: 14px; }
+  .forms input[type="text"]:hover,
+  .forms input[type="password"]:hover,
+  .forms input[type="text"]:focus,
+  .forms input[type="password"]:focus {
+    background: #cccccc; }
+  .forms button {
+    margin: 0 0 15px;
+    width: calc(100%-15px); }
+  .forms input[type="submit"], .forms button {
+    outline: 0;
+    background: #4CAF50;
+    width: 100%;
+    border: 0;
+    padding: 15px;
+    color: #FFFFFF;
+    font-size: 14px;
+    -webkit-transition: all 0.3 ease;
+    transition: all 0.3 ease;
+    cursor: pointer; }
+  .forms input[type="submit"]:hover,
+  .forms button:hover,
+  .forms .form input[type="submit"]:active,
+  .forms button:active,
+  .forms .form input[type="submit"]:focus,
+  .forms button:focus {
+    background: #43A047; }
+  .forms .register-form, .forms .signIn {
+    display: none; }
+  .forms .register-form {
+    display: none; }
+  .forms button {
+    margin: 0; }
+
+body {
+  background: #76b852;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(right, #76b852, #8DC26F);
+  background: -moz-linear-gradient(right, #76b852, #8DC26F);
+  background: -o-linear-gradient(right, #76b852, #8DC26F);
+  background: linear-gradient(to left, #76b852, #8DC26F);
+  font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
