@@ -17,4 +17,9 @@ Update: I cloned the updated repo into a different
 workspace and it worked fine. For reference:
 https://github.com/collab-uniba/socialcde4eclipse/wiki/How-to-import-a-GitHub-project-into-Eclipse
 
+How to build:
+	Linux or bash: Run "./gradlew html:dist"
+	Windows: Run "gradlew html:dist"
  
+Files to serve:
+	Files are located in "html/build/dist"
