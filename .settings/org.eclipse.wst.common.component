@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-    <wb-module deploy-name="CSCI_201_FinalProject_Froggerz">
-        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
-        <property name="context-root" value="CSCI_201_FinalProject_Froggerz"/>
-        <property name="java-output-path" value="/CSCI_201_FinalProject_Froggerz/build/classes"/>
-    </wb-module>
-</project-modules>
