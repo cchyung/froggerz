@@ -19,7 +19,7 @@ https://github.com/collab-uniba/socialcde4eclipse/wiki/How-to-import-a-GitHub-pr
 
 How to build:
 	Linux or bash: Run "./gradlew html:dist"
-	Windows: Run "gradlew html:dist"
+	Windows: Run "gradlew.bat html:dist"
  
 Files to serve:
 	Files are located in "html/build/dist"
