@@ -1,4 +1,4 @@
-package database;
+package server.src.database;
 
 import java.io.IOException;
 import java.sql.Connection;
