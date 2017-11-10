@@ -11,9 +11,12 @@ public class CollisionComponent extends Component {
 	}
 	
 	
-	// Set width/height of this box
-	
-	void SetSize(float width, float height)
+	/**
+	 * Sets the width and height of the collision box
+	 * @param width
+	 * @param height
+	 */
+	public void SetSize(float width, float height)
 	{
 		mWidth = width;
 		mHeight = height;
@@ -24,7 +27,7 @@ public class CollisionComponent extends Component {
 	 * @param other
 	 * @return
 	 */
-	boolean Intersect(final CollisionComponent other) {
+	public boolean Intersect(final CollisionComponent other) {
 		boolean allFalse = true;
 
 		if (getMax().x < other.getMin().x)  // Left
@@ -47,7 +50,7 @@ public class CollisionComponent extends Component {
 		return allFalse;
 	}
 	
-	final Vector2 getMin()
+	public final Vector2 getMin()
 	{
 		Vector2 min = mOwner.getPosition();
 		min.x = (mWidth * mOwner.getScale()) / 2.0f;
@@ -56,7 +59,7 @@ public class CollisionComponent extends Component {
 		return min;
 	}
 
-	final Vector2 getMax()
+	public final Vector2 getMax()
 	{
 		Vector2 max = mOwner.getPosition();
 		max.x = (mWidth * mOwner.getScale()) / 2.0f;
@@ -64,15 +67,15 @@ public class CollisionComponent extends Component {
 		return max;
 	}
 
-	final Vector2 getCenter() {
+	public final Vector2 getCenter() {
 		return mOwner.getPosition();
 	}
 	
-	final float getWidth() {
+	public final float getWidth() {
 		return mWidth; 
 	}
 	
-	final float getHeight() {
+	public final float getHeight() {
 		return mHeight;
 	}
 }
