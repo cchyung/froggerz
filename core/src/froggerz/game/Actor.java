@@ -8,6 +8,7 @@ public class Actor {
 	private State mState = State.EActive;
 	private Vector2 mPosition = Vector2.Zero;
 	private float mRotation = 0.0f;
+	private float mScale = 1.0f;
 	
 	// Components
 	private SpriteComponent mSpriteComp;
@@ -101,4 +102,6 @@ public class Actor {
 	public State getState() { return mState; }
 	public void setState(State state) { mState = state; }
 	public Game getGame() { return mGame; }
+	public final float getScale() { return mScale; }
+	public void setScale(float scale) { mScale = scale; }
 }
