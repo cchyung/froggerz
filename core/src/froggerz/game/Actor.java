@@ -12,6 +12,8 @@ public class Actor {
 	
 	// Components
 	private SpriteComponent mSpriteComp;
+	private MoveComponent mMoveComp;
+	private CollisionComponent mCollComp;
 	
 	public enum State {
 		EActive,
@@ -35,6 +37,14 @@ public class Actor {
 		if (mSpriteComp != null)
 		{
 			mSpriteComp.destroy();
+		}
+		if (mMoveComp != null)
+		{
+			mMoveComp.destroy();
+		}
+		if (mCollComp != null)
+		{
+			mCollComp.destroy();
 		}
 		mGame.removeActor(this);
 	}
