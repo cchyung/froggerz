@@ -44,7 +44,7 @@ public class Game extends ApplicationAdapter
 	
 	public enum TileType 
 	{
-		GRASS, WATER, ROAD, FINISH
+		GRASS, WATER, ROAD, FINISH, ROADTOP
 	}
 	
 	
@@ -202,6 +202,8 @@ public class Game extends ApplicationAdapter
 		for (int i = 0; i < text.length(); i++)
 		{
 			k++;
+			
+			//Load in the types of tiles
 			if (text.charAt(i) == '.') 
 			{
 				tileType = TileType.GRASS;
@@ -218,6 +220,52 @@ public class Game extends ApplicationAdapter
 			{
 				tileType = TileType.FINISH;
 			}
+			else if (text.charAt(i) == 'T')
+			{
+				tileType = TileType.ROADTOP;
+			}
+			
+			//Load in the actors (vehicles, logs, alligators, frogs)
+			else if (text.charAt(i) == '1')
+			{
+				Texture texture = manager.get("frog classic.png", Texture.class);
+				Actor frog = new Actor(this);
+				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
+				SpriteComponent sc1 = new SpriteComponent(frog, 100, texture);
+				sc1.setTexture(texture);
+				frog.setSprite(sc1);
+				tileType = TileType.GRASS;
+			}
+			else if (text.charAt(i) == '2')
+			{
+				Texture texture = manager.get("frog orange.png", Texture.class);
+				Actor frog = new Actor(this);
+				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
+				SpriteComponent sc1 = new SpriteComponent(frog, 100, texture);
+				sc1.setTexture(texture);
+				frog.setSprite(sc1);
+				tileType = TileType.GRASS;
+			}
+			else if (text.charAt(i) == '3')
+			{
+				Texture texture = manager.get("frog black.png", Texture.class);
+				Actor frog = new Actor(this);
+				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
+				SpriteComponent sc1 = new SpriteComponent(frog, 100, texture);
+				sc1.setTexture(texture);
+				frog.setSprite(sc1);
+				tileType = TileType.GRASS;
+			}
+			else if (text.charAt(i) == '4')
+			{
+				Texture texture = manager.get("frog red.png", Texture.class);
+				Actor frog = new Actor(this);
+				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
+				SpriteComponent sc1 = new SpriteComponent(frog, 100, texture);
+				sc1.setTexture(texture);
+				frog.setSprite(sc1);
+				tileType = TileType.GRASS;
+			}
 			else if (text.charAt(i) == 'V')
 			{
 				Texture texture = manager.get("blue car.png", Texture.class);
@@ -226,15 +274,37 @@ public class Game extends ApplicationAdapter
 				SpriteComponent sc1 = new SpriteComponent(car, 100, texture);
 				sc1.setTexture(texture);
 				car.setSprite(sc1);
+				tileType = TileType.ROAD;
 			}
-			else if (text.charAt(i) == 'T')
+			else if (text.charAt(i) == 'C')
 			{
-				Texture texture = manager.get("road top.png", Texture.class);
-				Actor top = new Actor(this);
-				top.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(top, 55, texture);
+				Texture texture = manager.get("red car.png", Texture.class);
+				Actor car = new Actor(this);
+				car.setPosition(new Vector2(k * 32, j * 32 + 5));
+				SpriteComponent sc1 = new SpriteComponent(car, 100, texture);
 				sc1.setTexture(texture);
-				top.setSprite(sc1);
+				car.setSprite(sc1);
+				tileType = TileType.ROADTOP;
+			}
+			else if (text.charAt(i) == 'L')
+			{
+				Texture texture = manager.get("log.png", Texture.class);
+				Actor log = new Actor(this);
+				log.setPosition(new Vector2(k * 32, j * 32 + 5));
+				SpriteComponent sc1 = new SpriteComponent(log, 100, texture);
+				sc1.setTexture(texture);
+				log.setSprite(sc1);
+				tileType = TileType.WATER;
+			}
+			else if (text.charAt(i) == 'A')
+			{
+				Texture texture = manager.get("gator0.png", Texture.class);
+				Actor gator = new Actor(this);
+				gator.setPosition(new Vector2(k * 32, j * 32 + 5));
+				SpriteComponent sc1 = new SpriteComponent(gator, 100, texture);
+				sc1.setTexture(texture);
+				gator.setSprite(sc1);
+				tileType = TileType.WATER;
 			}
 			else if (text.charAt(i) == '\n')
 			{
@@ -280,6 +350,14 @@ public class Game extends ApplicationAdapter
 				finish.setPosition(new Vector2(k * 32, j * 32));
 				SpriteComponent sc4 = new SpriteComponent(finish, 50, texture4);
 				finish.setSprite(sc4);
+				break;
+				
+			case ROADTOP:
+				Texture texture5 = manager.get("road top.png", Texture.class);
+				Actor top = new Actor(this);
+				top.setPosition(new Vector2(k * 32, j * 32));
+				SpriteComponent sc5 = new SpriteComponent(top, 50, texture5);
+				top.setSprite(sc5);
 				break;
 			}
 			
