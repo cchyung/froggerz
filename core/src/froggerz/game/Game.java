@@ -183,7 +183,7 @@ public class Game extends ApplicationAdapter
 		manager.load(Gdx.files.internal("road.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("water.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("road top.png").path(), Texture.class);
-		// TODO Get the players skins form server
+		// TODO Get the players skins from server
 		// Texture playerSkin = manager.load(Gdx.files.internal("playerskin.png").path(), Texture.class);
 		
 		manager.finishLoading();  // Block until all assets are loaded
@@ -279,6 +279,16 @@ public class Game extends ApplicationAdapter
 			else if (text.charAt(i) == 'C')
 			{
 				Texture texture = manager.get("red car.png", Texture.class);
+				Actor car = new Actor(this);
+				car.setPosition(new Vector2(k * 32, j * 32 + 5));
+				SpriteComponent sc1 = new SpriteComponent(car, 100, texture);
+				sc1.setTexture(texture);
+				car.setSprite(sc1);
+				tileType = TileType.ROAD;
+			}
+			else if (text.charAt(i) == 'P')
+			{
+				Texture texture = manager.get("police car.png", Texture.class);
 				Actor car = new Actor(this);
 				car.setPosition(new Vector2(k * 32, j * 32 + 5));
 				SpriteComponent sc1 = new SpriteComponent(car, 100, texture);
