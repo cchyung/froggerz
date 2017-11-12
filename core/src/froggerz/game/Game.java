@@ -16,6 +16,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -182,7 +183,7 @@ public class Game extends ApplicationAdapter
 		manager.load(Gdx.files.internal("red car.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("road.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("water.png").path(), Texture.class);
-		manager.load(Gdx.files.internal("road top.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("roadtop.png").path(), Texture.class);
 		// TODO Get the players skins from server
 		// Texture playerSkin = manager.load(Gdx.files.internal("playerskin.png").path(), Texture.class);
 		
@@ -231,8 +232,11 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("frog classic.png", Texture.class);
 				Actor frog = new Actor(this);
 				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(frog, 100, texture);
-				sc1.setTexture(texture);
+				SpriteComponent sc1 = new SpriteComponent(frog, 100);				
+				Sprite sprite = new Sprite(texture);
+				sprite.setSize(30, 23);
+				sprite.setPosition(frog.getPosition().x, frog.getPosition().y);
+				sc1.setSprite(sprite);
 				frog.setSprite(sc1);
 				tileType = TileType.GRASS;
 			}
@@ -241,8 +245,11 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("frog orange.png", Texture.class);
 				Actor frog = new Actor(this);
 				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(frog, 100, texture);
-				sc1.setTexture(texture);
+				SpriteComponent sc1 = new SpriteComponent(frog, 100);
+				Sprite sprite = new Sprite(texture);
+				sprite.setSize(30, 23);
+				sprite.setPosition(frog.getPosition().x, frog.getPosition().y);
+				sc1.setSprite(sprite);
 				frog.setSprite(sc1);
 				tileType = TileType.GRASS;
 			}
@@ -251,8 +258,11 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("frog black.png", Texture.class);
 				Actor frog = new Actor(this);
 				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(frog, 100, texture);
-				sc1.setTexture(texture);
+				SpriteComponent sc1 = new SpriteComponent(frog, 100);
+				Sprite sprite = new Sprite(texture);
+				sprite.setSize(30, 23);
+				sprite.setPosition(frog.getPosition().x, frog.getPosition().y);
+				sc1.setSprite(sprite);
 				frog.setSprite(sc1);
 				tileType = TileType.GRASS;
 			}
@@ -261,8 +271,11 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("frog red.png", Texture.class);
 				Actor frog = new Actor(this);
 				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(frog, 100, texture);
-				sc1.setTexture(texture);
+				SpriteComponent sc1 = new SpriteComponent(frog, 100);
+				Sprite sprite = new Sprite(texture);
+				sprite.setSize(30, 23);
+				sprite.setPosition(frog.getPosition().x, frog.getPosition().y);
+				sc1.setSprite(sprite);
 				frog.setSprite(sc1);
 				tileType = TileType.GRASS;
 			}
@@ -271,8 +284,11 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("blue car.png", Texture.class);
 				Actor car = new Actor(this);
 				car.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(car, 100, texture);
-				sc1.setTexture(texture);
+				SpriteComponent sc1 = new SpriteComponent(car, 100);
+				Sprite sprite = new Sprite(texture);
+				sprite.setSize(43, 28);
+				sprite.setPosition(car.getPosition().x, car.getPosition().y);
+				sc1.setSprite(sprite);
 				car.setSprite(sc1);
 				tileType = TileType.ROAD;
 			}
@@ -281,9 +297,12 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("red car.png", Texture.class);
 				Actor car = new Actor(this);
 				car.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(car, 100, texture);
-				sc1.setTexture(texture);
-				car.setSprite(sc1);
+				SpriteComponent sc1 = new SpriteComponent(car, 100);
+				Sprite sprite = new Sprite(texture);
+				sprite.setSize(43, 28);
+				sprite.setPosition(car.getPosition().x, car.getPosition().y);
+				sc1.setSprite(sprite);
+				car.setSprite(sc1);;
 				tileType = TileType.ROAD;
 			}
 			else if (text.charAt(i) == 'P')
@@ -291,8 +310,11 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("police car.png", Texture.class);
 				Actor car = new Actor(this);
 				car.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(car, 100, texture);
-				sc1.setTexture(texture);
+				SpriteComponent sc1 = new SpriteComponent(car, 100);
+				Sprite sprite = new Sprite(texture);
+				sprite.setSize(65, 28);
+				sprite.setPosition(car.getPosition().x, car.getPosition().y);
+				sc1.setSprite(sprite);
 				car.setSprite(sc1);
 				tileType = TileType.ROADTOP;
 			}
@@ -301,8 +323,11 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("log.png", Texture.class);
 				Actor log = new Actor(this);
 				log.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(log, 100, texture);
-				sc1.setTexture(texture);
+				SpriteComponent sc1 = new SpriteComponent(log, 100);
+				Sprite sprite = new Sprite(texture);
+				sprite.setSize(60, 19);
+				sprite.setPosition(log.getPosition().x, log.getPosition().y);
+				sc1.setSprite(sprite);
 				log.setSprite(sc1);
 				tileType = TileType.WATER;
 			}
@@ -311,8 +336,11 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("gator0.png", Texture.class);
 				Actor gator = new Actor(this);
 				gator.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(gator, 100, texture);
-				sc1.setTexture(texture);
+				SpriteComponent sc1 = new SpriteComponent(gator, 100);
+				Sprite sprite = new Sprite(texture);
+				sprite.setSize(100, 19);
+				sprite.setPosition(gator.getPosition().x, gator.getPosition().y);
+				sc1.setSprite(sprite);
 				gator.setSprite(sc1);
 				tileType = TileType.WATER;
 			}
@@ -322,18 +350,20 @@ public class Game extends ApplicationAdapter
 				
 				//k should always have the column's index (0 - 7)
 				//each row has 8 chars plus the endl char
-				k = k - 9;
+				k = k - 21;
 			}
 
-			
 			switch(tileType) 
 			{
 			case GRASS:
 				Texture texture1 = manager.get("grass.png", Texture.class);
 				Actor grass = new Actor(this);
 				grass.setPosition(new Vector2(k * 32, j * 32));
-				SpriteComponent sc1 = new SpriteComponent(grass, 50, texture1);
-				sc1.setTexture(texture1);
+				SpriteComponent sc1 = new SpriteComponent(grass, 50);
+				Sprite sprite = new Sprite(texture1);
+				sprite.setSize(32, 32);
+				sprite.setPosition(grass.getPosition().x, grass.getPosition().y);
+				sc1.setSprite(sprite);
 				grass.setSprite(sc1);
 				break;
 				
@@ -341,229 +371,52 @@ public class Game extends ApplicationAdapter
 				Texture texture2 = manager.get("water.png", Texture.class);
 				Actor water = new Actor(this);
 				water.setPosition(new Vector2(k * 32, j * 32));
-				SpriteComponent sc2 = new SpriteComponent(water, 50, texture2);
+				SpriteComponent sc2 = new SpriteComponent(water, 50);
+				Sprite sprite2 = new Sprite(texture2);
+				sprite2.setSize(32, 32);
+				sprite2.setPosition(water.getPosition().x, water.getPosition().y);
+				sc2.setSprite(sprite2);
 				water.setSprite(sc2);
 				break;
-				
 			case ROAD:
 				Texture texture3 = manager.get("road.png", Texture.class);
 				Actor road = new Actor(this);
 				road.setPosition(new Vector2(k * 32, j * 32));
-				SpriteComponent sc3 = new SpriteComponent(road, 50, texture3);
+				SpriteComponent sc3 = new SpriteComponent(road, 50);
+				Sprite sprite3 = new Sprite(texture3);
+				sprite3.setSize(32, 32);
+				sprite3.setPosition(road.getPosition().x, road.getPosition().y);
+				sc3.setSprite(sprite3);
 				road.setSprite(sc3);
 				break;
-				
 			case FINISH:
 				// TODO if player collides with this, end the game
 				Texture texture4 = manager.get("finish.png", Texture.class);
 				Actor finish = new Actor(this);
 				finish.setPosition(new Vector2(k * 32, j * 32));
-				SpriteComponent sc4 = new SpriteComponent(finish, 50, texture4);
+				SpriteComponent sc4 = new SpriteComponent(finish, 50);
+				Sprite sprite4 = new Sprite(texture4);
+				sprite4.setSize(32, 32);
+				sprite4.setPosition(finish.getPosition().x, finish.getPosition().y);
+				sc4.setSprite(sprite4);
 				finish.setSprite(sc4);
 				break;
-				
 			case ROADTOP:
-				Texture texture5 = manager.get("road top.png", Texture.class);
+				Texture texture5 = manager.get("roadtop.png", Texture.class);
 				Actor top = new Actor(this);
 				top.setPosition(new Vector2(k * 32, j * 32));
-				SpriteComponent sc5 = new SpriteComponent(top, 50, texture5);
+				SpriteComponent sc5 = new SpriteComponent(top, 50);
+				Sprite sprite5 = new Sprite(texture5);
+				sprite5.setSize(32, 32);
+				sprite5.setPosition(top.getPosition().x, top.getPosition().y);
+				sc5.setSprite(sprite5);
 				top.setSprite(sc5);
 				break;
 			}
-			
-			
-		}
-
-
-		/* 
-		//The file wasn't being found for me with this approach
-
-		BufferedReader br = null;
-		
-		try 
-		{
-			br = new BufferedReader(new FileReader(Gdx.files.internal("Level.txt").path()));
-		} catch (FileNotFoundException fnfe) 
-		{
-			System.out.println("Cannot load level file. Quiting game: " + fnfe.getMessage());
-			exitGame();
-		}
-		
-		
-		if(br == null) 
-		{
-			exitGame();
-		}
-		*/
-		
-		/*
-		
-		// Loop through the Level.txt file
-		String currLine = null;
-		float xPos = 32.0f;
-		float yPos = 32.0f;
-		for (int j = 0; j < mLevelHeight; ++j, yPos+=32.0f)  // Vertical
-		{
-			xPos = 32.0f;
-			try 
-			{
-				currLine = br.readLine();
-			} catch(IOException ioe) 
-			{
-				System.out.println("Could not read from level file: " + ioe.getMessage());
-				exitGame();
-			}
-			
-			for (int i=0; i < currLine.length(); ++i, xPos+=32.0f)  // Horizontal
-			{
-				TileType tileType = null;
-				Actor actor = null;
-				SpriteComponent sc = null;
-				Texture texture = null;
-				boolean notTile = true;
 				
-				// TODO replace Actor with the appropriate child class when they are created
-				// Player 1
-				if (currLine.charAt(i) == '1') 
-				{
-					// TODO replace which texture is got based on skins gotten from server
-					texture = manager.get("player1.png", Texture.class);
-					actor = new Actor(this);	
-					sc = new SpriteComponent(actor, 100);
-					
-					tileType = TileType.GRASS;
-				}
-				// Player 2
-				else if (currLine.charAt(i) == '2') 
-				{
-					texture = manager.get("player2.png", Texture.class);
-					actor = new Actor(this);
-					sc = new SpriteComponent(actor, 100);
-
-					tileType = TileType.GRASS;
-				}
-				// Player 3
-				else if (currLine.charAt(i) == '3') 
-				{
-					texture = manager.get("player3.png", Texture.class);
-					actor = new Actor(this);
-					sc = new SpriteComponent(actor, 100);
-
-					tileType = TileType.GRASS;
-				}
-				// Player 4
-				else if (currLine.charAt(i) == '4') 
-				{
-					texture = manager.get("player4.png", Texture.class);
-					actor = new Actor(this);
-					sc = new SpriteComponent(actor, 100);
-
-					tileType = TileType.GRASS;
-				}
-				// Vehicle
-				else if(currLine.charAt(i) == 'V') 
-				{
-					//TODO Set direction the vehicle is going in based on x value (32 or mLevelWidth-32)
-					texture = manager.get("vehicle.png", Texture.class);
-					actor = new Actor(this);
-					sc = new SpriteComponent(actor, 100);
-
-					tileType = TileType.ROAD;
-				}
-				// Log
-				else if(currLine.charAt(i) == 'L') 
-				{
-					//TODO Set direction the log is going in based on x value (32 or mLevelWidth-32)
-					texture = manager.get("log.png", Texture.class);
-					actor = new Actor(this);
-					sc = new SpriteComponent(actor, 100);
-					
-					tileType = TileType.WATER;
-				}
-				else 
-				{
-					notTile = false;
-				}
-				
-				if(notTile) 
-				{
-					actor.setPosition(new Vector2(xPos, yPos));
-					sc.setTexture(texture);
-					actor.setSprite(sc);
-				}
-				
-				// Background tile type
-				if(currLine.charAt(i) == '.') 
-				{
-					tileType = TileType.GRASS;
-				}
-				else if(currLine.charAt(i) == 'W') 
-				{
-					tileType = TileType.WATER;
-				}
-				else if(currLine.charAt(i) == 'R') 
-				{
-					tileType = TileType.ROAD;
-				}
-				else if(currLine.charAt(i) == 'F') 
-				{
-					tileType = TileType.FINISH;
-				}
-				
-				// Select the bass tile
-				switch(tileType) 
-				{
-					case GRASS:
-						Texture texture1 = manager.get("grass.png", Texture.class);
-						Actor grass = new Actor(this);
-						grass.setPosition(new Vector2(xPos, yPos));
-						SpriteComponent sc1 = new SpriteComponent(grass, 50);
-						sc1.setTexture(texture1);
-						grass.setSprite(sc1);
-						break;
-					case WATER:
-						Texture texture2 = manager.get("water.png", Texture.class);
-						Actor water = new Actor(this);
-						water.setPosition(new Vector2(xPos, yPos));
-						SpriteComponent sc2 = new SpriteComponent(water, 50);
-						sc2.setTexture(texture2);
-						water.setSprite(sc2);
-						break;
-					case ROAD:
-						Texture texture3 = manager.get("road.png", Texture.class);
-						Actor road = new Actor(this);
-						road.setPosition(new Vector2(xPos, yPos));
-						SpriteComponent sc3 = new SpriteComponent(road, 50);
-						sc3.setTexture(texture3);
-						road.setSprite(sc3);
-						break;
-					case FINISH:
-						// TODO if player collides with this, end the game
-						Texture texture4 = manager.get("finish.png", Texture.class);
-						Actor finish = new Actor(this);
-						finish.setPosition(new Vector2(xPos, yPos));
-						SpriteComponent sc4 = new SpriteComponent(finish, 50);
-						sc4.setTexture(texture4);
-						finish.setSprite(sc4);
-						break;
-				} // end switch
-			}
 		}
-		
-		// Close input streams
-		try 
-		{
-			if(br != null) 
-			{
-				br.close();
-			}
-		} catch (IOException ioe) 
-		{
-			System.out.println("Problem closing files in loadData(): " + ioe.getMessage());
-		}
-		*/
 	}
-	
+
 	
 	/**
 	 * Unloads data relevant to the game

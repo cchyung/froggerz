@@ -13,14 +13,10 @@ public class SpriteComponent extends Component
 	 * @param owner
 	 * @param drawOrder
 	 */
-	public SpriteComponent(Actor owner, int drawOrder, Texture texture) 
+	public SpriteComponent(Actor owner, int drawOrder) 
 	{
 		super(owner);
 		mDrawOrder = drawOrder;
-		
-		//Initialize mSprite's texture and set its position to the owner's position
-		mSprite = new Sprite(texture);
-		mSprite.setPosition(owner.getPosition().x, owner.getPosition().y);
 		mOwner.getGame().addSprite(this);
 	}
 	
