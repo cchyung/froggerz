@@ -66,6 +66,10 @@ public class Actor
 			{
 				mSpriteComp.update(deltaTime);
 			}	
+			if (mMoveComp != null)
+			{
+				mMoveComp.update(deltaTime);
+			}
 			updateActor(deltaTime);
 		}
 	}
@@ -76,6 +80,7 @@ public class Actor
 	 */
 	public void updateActor(float deltaTime) 
 	{
+		
 	}
 	
 	/**
@@ -86,9 +91,17 @@ public class Actor
 		if (mState == State.EActive)
 		{
 			// ProcessInput of components
+			if (mMoveComp != null)
+			{
+				mMoveComp.processInput();
+			}
 			if (mSpriteComp != null)
 			{
 				mSpriteComp.processInput();
+			}
+			if (mCollComp != null)
+			{
+				mCollComp.processInput();
 			}
 			actorInput();
 		}
@@ -118,6 +131,8 @@ public class Actor
 	public void setRotation(float rotation) { mRotation = rotation; }
 	public SpriteComponent getSprite() { return mSpriteComp; }
 	public void setSprite(SpriteComponent sprite) { mSpriteComp = sprite; }
+	public MoveComponent getMove() { return mMoveComp; }
+	public void setMove(MoveComponent move) { mMoveComp = move; }
 	public State getState() { return mState; }
 	public void setState(State state) { mState = state; }
 	public Game getGame() { return mGame; }

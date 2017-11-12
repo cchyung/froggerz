@@ -67,4 +67,10 @@ public class SpriteComponent extends Component
 	{
 		mDrawOrder = drawOrder;
 	}
+	
+	public void update(float deltaTime)
+	{
+		mSprite.setPosition(mOwner.getPosition().x, mOwner.getPosition().y);
+	}
+
 }

@@ -232,12 +232,14 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("frog classic.png", Texture.class);
 				Actor frog = new Actor(this);
 				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(frog, 100);				
+				SpriteComponent sc1 = new SpriteComponent(frog, 150);				
 				Sprite sprite = new Sprite(texture);
 				sprite.setSize(30, 23);
 				sprite.setPosition(frog.getPosition().x, frog.getPosition().y);
 				sc1.setSprite(sprite);
 				frog.setSprite(sc1);
+				FrogMove move = new FrogMove(frog);
+				frog.setMove(move);
 				tileType = TileType.GRASS;
 			}
 			else if (text.charAt(i) == '2')
@@ -245,7 +247,7 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("frog orange.png", Texture.class);
 				Actor frog = new Actor(this);
 				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(frog, 100);
+				SpriteComponent sc1 = new SpriteComponent(frog, 150);
 				Sprite sprite = new Sprite(texture);
 				sprite.setSize(30, 23);
 				sprite.setPosition(frog.getPosition().x, frog.getPosition().y);
@@ -258,7 +260,7 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("frog black.png", Texture.class);
 				Actor frog = new Actor(this);
 				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(frog, 100);
+				SpriteComponent sc1 = new SpriteComponent(frog, 150);
 				Sprite sprite = new Sprite(texture);
 				sprite.setSize(30, 23);
 				sprite.setPosition(frog.getPosition().x, frog.getPosition().y);
@@ -271,7 +273,7 @@ public class Game extends ApplicationAdapter
 				Texture texture = manager.get("frog red.png", Texture.class);
 				Actor frog = new Actor(this);
 				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				SpriteComponent sc1 = new SpriteComponent(frog, 100);
+				SpriteComponent sc1 = new SpriteComponent(frog, 150);
 				Sprite sprite = new Sprite(texture);
 				sprite.setSize(30, 23);
 				sprite.setPosition(frog.getPosition().x, frog.getPosition().y);
@@ -412,8 +414,7 @@ public class Game extends ApplicationAdapter
 				sc5.setSprite(sprite5);
 				top.setSprite(sc5);
 				break;
-			}
-				
+			}	
 		}
 	}
 
