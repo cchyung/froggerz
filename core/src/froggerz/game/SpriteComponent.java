@@ -3,7 +3,8 @@ package froggerz.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
-public class SpriteComponent extends Component{
+public class SpriteComponent extends Component
+{
 	private Sprite mSprite = null;
 	private int mDrawOrder = 100;
 	
@@ -12,51 +13,62 @@ public class SpriteComponent extends Component{
 	 * @param owner
 	 * @param drawOrder
 	 */
-	public SpriteComponent(Actor owner, int drawOrder) {
+	public SpriteComponent(Actor owner, int drawOrder, Texture texture) 
+	{
 		super(owner);
 		mDrawOrder = drawOrder;
+		
+		//Initialize mSprite's texture and set its position to the owner's position
+		mSprite = new Sprite(texture);
+		mSprite.setPosition(owner.getPosition().x, owner.getPosition().y);
 		mOwner.getGame().addSprite(this);
 	}
 	
 	/**
 	 * Removes this sprite from mOwner's game
 	 */
-	public void destroy() {
+	public void destroy() 
+	{
 		mOwner.getGame().removeSprite(this);
 	}
 	
 	/**
 	 * @param texture
 	 */
-	public void setTexture(Texture texture) {
+	public void setTexture(Texture texture) 
+	{
 		mSprite.setRegion(texture);
 	}
 	
 	/**
 	 * @param sprite Sprite to set
 	 */
-	public void setSprite(Sprite sprite) {
+	public void setSprite(Sprite sprite) 
+	{
 		mSprite = sprite;
 	}
 	
 	/**
 	 * @return Sprite that belongs to the SpriteComponent
 	 */
-	public Sprite getSprite() {
+	public Sprite getSprite() 
+	{
 		return mSprite;
 	}
 	
 	/**
 	 * @return mDrawOrder
 	 */
-	public int getDrawOrder() {
+	public int getDrawOrder() 
+	{
 		return mDrawOrder;
 	}
 	
 	/**
 	 * @param drawOrder
 	 */
-	public void setDrawOrder(int drawOrder) {
+	public void setDrawOrder(int drawOrder) 
+	{
 		mDrawOrder = drawOrder;
 	}
 }

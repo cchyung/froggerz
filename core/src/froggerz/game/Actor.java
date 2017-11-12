@@ -3,7 +3,8 @@ package froggerz.game;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public class Actor {
+public class Actor 
+{
 	private Game mGame = null;
 	private State mState = State.EActive;
 	private Vector2 mPosition = Vector2.Zero;
@@ -15,7 +16,8 @@ public class Actor {
 	private MoveComponent mMoveComp;
 	private CollisionComponent mCollComp;
 	
-	public enum State {
+	public enum State 
+	{
 		EActive,
 		EPaused,
 		EDead
@@ -25,7 +27,8 @@ public class Actor {
 	 * Constructor
 	 * @param game
 	 */
-	public Actor(Game game) {
+	public Actor(Game game) 
+	{
 		mGame = game;
 		mGame.addActor(this);
 	}
@@ -33,7 +36,8 @@ public class Actor {
 	/**
 	 * Performed when the object is no longer needed, unloads any data
 	 */
-	public void destroy() {
+	public void destroy() 
+	{
 		if (mSpriteComp != null)
 		{
 			mSpriteComp.destroy();
@@ -53,7 +57,8 @@ public class Actor {
 	 *  Update function called from Game
 	 * @param deltaTime
 	 */
-	public void update(float deltaTime) {
+	public void update(float deltaTime) 
+	{
 		if (mState == State.EActive)
 		{
 			// Update Components
@@ -69,13 +74,15 @@ public class Actor {
 	 * Any Actor-specific update code
 	 * @param deltaTime
 	 */
-	public void updateActor(float deltaTime) {
+	public void updateActor(float deltaTime) 
+	{
 	}
 	
 	/**
 	 * processInput function called from Game
 	 */
-	void processInput() {
+	void processInput() 
+	{
 		if (mState == State.EActive)
 		{
 			// ProcessInput of components
@@ -90,14 +97,16 @@ public class Actor {
 	/**
 	 * Any Actor-specific update code
 	 */
-	public void actorInput() {
+	public void actorInput() 
+	{
 	}
 	
 	/**
 	 * Returns the forward direction vector of the Actor
 	 * @return
 	 */
-	public Vector2 getForward() {
+	public Vector2 getForward() 
+	{
 		return new Vector2(MathUtils.cos(mRotation), MathUtils.sin(mRotation));
 	}
 	
