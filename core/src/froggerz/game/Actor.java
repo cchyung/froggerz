@@ -12,9 +12,9 @@ public class Actor
 	private float mScale = 1.0f;
 	
 	// Components
-	private SpriteComponent mSpriteComp;
-	private MoveComponent mMoveComp;
-	private CollisionComponent mCollComp;
+	protected SpriteComponent mSpriteComp;
+	protected MoveComponent mMoveComp;
+	protected CollisionComponent mCollComp;
 	
 	public enum State 
 	{
@@ -126,7 +126,7 @@ public class Actor
 	//////////////////////////////// SETTERS/GETTERS ////////////////////////////////
 	
 	public Vector2 getPosition() { return mPosition; }
-	public void setPosition(Vector2 pos) { mPosition = pos; }
+	public void setPosition(Vector2 pos) { mPosition = pos; mSpriteComp.setPosition(mPosition); }
 	public float getRotation() { return mRotation; }
 	public void setRotation(float rotation) { mRotation = rotation; }
 	public SpriteComponent getSprite() { return mSpriteComp; }

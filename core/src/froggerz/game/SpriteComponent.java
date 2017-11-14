@@ -2,6 +2,7 @@ package froggerz.game;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 
 public class SpriteComponent extends Component
 {
@@ -17,6 +18,7 @@ public class SpriteComponent extends Component
 	{
 		super(owner);
 		mDrawOrder = drawOrder;
+		mSprite = new Sprite();
 		mOwner.getGame().addSprite(this);
 	}
 	
@@ -42,6 +44,21 @@ public class SpriteComponent extends Component
 	public void setSprite(Sprite sprite) 
 	{
 		mSprite = sprite;
+	}
+	
+	/**
+	 * @param position Position of the sprite
+	 */
+	public void setPosition(Vector2 position) {
+		mSprite.setPosition(position.x, position.y);
+	}
+	
+	/**
+	 * @param width Width of the sprite image
+	 * @param height Height of the sprite image
+	 */
+	public void setSize(float width, float height) {
+		mSprite.setSize(width, height);
 	}
 	
 	/**
