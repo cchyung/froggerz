@@ -1,4 +1,4 @@
-package server.src.database;
+package froggerz.db;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -27,6 +27,7 @@ public class Login extends HttpServlet
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
+		
 
 		try
 		{
@@ -38,16 +39,14 @@ public class Login extends HttpServlet
 			rs = st.executeQuery("SELECT * from Users where username='" + inputtedName + "'");
 
 			String password = null;
-
-			while (rs.next())
-			{
-				// KPTODO some logic about only one username when creating a new
-				// user
-				// username = rs.getString("username");
+			
+			boolean loginSuccess = false;
+			
+			if(rs.next()) {
 				password = rs.getString("password");
-			}
-
-			final Boolean loginSuccess = (inputtedPassword.equals(password));
+				loginSuccess = (inputtedPassword.equals(password));
+			} 
+			
 			request.setAttribute("username", inputtedName);
 			request.setAttribute("loginSuccess", loginSuccess);
 		}
