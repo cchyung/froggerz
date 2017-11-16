@@ -11,7 +11,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -35,7 +39,9 @@ public class Game extends ApplicationAdapter
 	private Array<SpriteComponent> mSprites;
 	
 	private SpriteBatch batch;
-	private AssetManager manager;  // Keeps track of assests
+	private AssetManager manager;  // Keeps track of assets
+	public TextureAtlas atlas = new TextureAtlas();
+	public Animation<TextureRegion> gatorAnimation;
 	
 	public enum TileType 
 	{
@@ -166,11 +172,11 @@ public class Game extends ApplicationAdapter
 		manager.load(Gdx.files.internal("frog orange.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("frog purple.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("frog red.png").path(), Texture.class);
-		manager.load(Gdx.files.internal("gator0.png").path(), Texture.class);
-		manager.load(Gdx.files.internal("gator1.png").path(), Texture.class);
-		manager.load(Gdx.files.internal("gator2.png").path(), Texture.class);
-		manager.load(Gdx.files.internal("gator3.png").path(), Texture.class);
-		manager.load(Gdx.files.internal("gator4.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator_0.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator_1.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator_2.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator_3.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator_4.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("grass.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("log.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("police car.png").path(), Texture.class);
@@ -330,12 +336,42 @@ public class Game extends ApplicationAdapter
 			}
 			else if (text.charAt(i) == 'A')
 			{
-				Texture texture = manager.get("gator0.png", Texture.class);
+				Texture texture = manager.get("gator_0.png", Texture.class);
+				Texture texture1 = manager.get("gator_1.png", Texture.class);
+				Texture texture2 = manager.get("gator_2.png", Texture.class);
+				Texture texture3 = manager.get("gator_3.png", Texture.class);
+				Texture texture4 = manager.get("gator_4.png", Texture.class);
 				Actor gator = new Alligator(this);
 
-				SpriteComponent sc = new SpriteComponent(gator, 100);
-				sc.setTexture(texture);
+				AnimatedSprite sc = new AnimatedSprite(gator, 100);
+				sc.setTexture(texture); //just need to initialize the texture to something
+				
+				//Add images to the animation...need a lot of copies of the mouth in the closed state
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture);
+				sc.addImage(texture1);
+				sc.addImage(texture2);
+				sc.addImage(texture3);
+				sc.addImage(texture4);
+				
+				//Mouth is open all the way, now it needs to gradually close
+				sc.addImage(texture4);
+				sc.addImage(texture3);
+				sc.addImage(texture2);
+				sc.addImage(texture1);
+				sc.addImage(texture);
+				
 				sc.setSize(100, 19);
+				sc.setSpeed(10.0f);
 				gator.setSprite(sc);
 				
 				gator.setPosition(new Vector2(k * 32, j * 32 + 5));
@@ -345,8 +381,8 @@ public class Game extends ApplicationAdapter
 			{
 				j++;	
 				
-				//k should always have the column's index (0 - 7)
-				//each row has 8 chars plus the endl char
+				//k should always have the column's index (0 - 19)
+				//each row has 20 chars plus the endl char
 				k = k - 21;
 			}
 
