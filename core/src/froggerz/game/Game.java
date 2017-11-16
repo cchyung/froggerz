@@ -163,6 +163,31 @@ public class Game extends ApplicationAdapter
 	 */
 	private void loadData() 
 	{
+		//Declare lanes and their speeds/directions
+		Lane lane1 = new Lane();
+		lane1.setDirection(-1.0f);
+		lane1.setSpeed(40.0f);
+		
+		Lane lane2 = new Lane();
+		lane2.setDirection(1.0f);
+		lane2.setSpeed(70.0f);
+		
+		Lane lane3 = new Lane();
+		lane3.setDirection(1.0f);
+		lane3.setSpeed(55.0f);
+		
+		Lane lane4 = new Lane();
+		lane4.setDirection(-1.0f);
+		lane4.setSpeed(100.0f);
+		
+		River river1 = new River();
+		river1.setDirection(-1.0f);
+		river1.setSpeed(20.0f);
+		
+		River river2 = new River();
+		river2.setDirection(1.0f);
+		river2.setSpeed(25.0f);
+		
 		//Load all of the assets
 		manager.load(Gdx.files.internal("blue car.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("finish.png").path(), Texture.class);
@@ -200,6 +225,8 @@ public class Game extends ApplicationAdapter
 		TileType tileType = null;
 		int j = 0;
 		int k = -1;
+		//Keep track of how many logs have been made
+		int logCount = 0;
 		for (int i = 0; i < text.length(); i++)
 		{
 			k++;
@@ -294,6 +321,26 @@ public class Game extends ApplicationAdapter
 				
 				car.setPosition(new Vector2(k * 32, j * 32 + 5));
 				tileType = TileType.ROAD;
+				
+				//Assign cars to lanes
+				if (car.getPosition().y >= 128 && car.getPosition().y <= 140)
+				{
+					lane1.addVehicleToLane(car);
+				}
+				
+				else if (car.getPosition().y >= 160 && car.getPosition().y <= 172)
+				{
+					lane2.addVehicleToLane(car);
+				}
+				
+				else if (car.getPosition().y >= 384 && car.getPosition().y <= 396)
+				{
+					lane3.addVehicleToLane(car);
+				}
+				else
+				{
+					lane4.addVehicleToLane(car);
+				}
 			}
 			else if (text.charAt(i) == 'C')
 			{
@@ -307,6 +354,26 @@ public class Game extends ApplicationAdapter
 				
 				car.setPosition(new Vector2(k * 32, j * 32 + 5));
 				tileType = TileType.ROAD;
+				
+				//Assign cars to lanes
+				if (car.getPosition().y >= 128 && car.getPosition().y <= 140)
+				{
+					lane1.addVehicleToLane(car);
+				}
+				
+				else if (car.getPosition().y >= 160 && car.getPosition().y <= 172)
+				{
+					lane2.addVehicleToLane(car);
+				}
+				
+				else if (car.getPosition().y >= 384 && car.getPosition().y <= 396)
+				{
+					lane3.addVehicleToLane(car);
+				}
+				else
+				{
+					lane4.addVehicleToLane(car);
+				}
 			}
 			else if (text.charAt(i) == 'P')
 			{
@@ -320,6 +387,26 @@ public class Game extends ApplicationAdapter
 				
 				car.setPosition(new Vector2(k * 32, j * 32 + 5));
 				tileType = TileType.ROADTOP;
+				
+				//Assign cars to lanes
+				if (car.getPosition().y >= 128 && car.getPosition().y <= 140)
+				{
+					lane1.addVehicleToLane(car);
+				}
+				
+				else if (car.getPosition().y >= 160 && car.getPosition().y <= 172)
+				{
+					lane2.addVehicleToLane(car);
+				}
+				
+				else if (car.getPosition().y >= 384 && car.getPosition().y <= 396)
+				{
+					lane3.addVehicleToLane(car);
+				}
+				else
+				{
+					lane4.addVehicleToLane(car);
+				}
 			}
 			else if (text.charAt(i) == 'L')
 			{
@@ -328,11 +415,39 @@ public class Game extends ApplicationAdapter
 				
 				SpriteComponent sc = new SpriteComponent(log, 100);
 				sc.setTexture(texture);
-				sc.setSize(60, 19);
+				
+				//Evenly distribute the log sizes
+				if (logCount % 3 == 0)
+				{
+					sc.setSize(60, 19);
+				}
+				
+				else if (logCount % 3 == 1)
+				{
+					sc.setSize(90, 19);
+				}
+				
+				else if (logCount % 3 == 2)
+				{
+					sc.setSize(120, 19);
+				}
+				
 				log.setSprite(sc);
 				
 				log.setPosition(new Vector2(k * 32, j * 32 + 5));
 				tileType = TileType.WATER;
+				logCount++;
+				
+				//Assign logs to rivers
+				if (log.getPosition().y >= 256 && log.getPosition().y <= 268)
+				{
+					river1.addThingToRiver(log);
+				}
+				
+				else
+				{
+					river2.addThingToRiver(log);
+				}
 			}
 			else if (text.charAt(i) == 'A')
 			{
@@ -375,6 +490,17 @@ public class Game extends ApplicationAdapter
 				
 				gator.setPosition(new Vector2(k * 32, j * 32 + 5));
 				tileType = TileType.WATER;
+				
+				//Assign alligators to rivers
+				if (gator.getPosition().y >= 256 && gator.getPosition().y <= 268)
+				{
+					river1.addThingToRiver(gator);
+				}
+				
+				else
+				{
+					river2.addThingToRiver(gator);
+				}
 			}
 			else if (text.charAt(i) == '\n')
 			{
@@ -418,7 +544,7 @@ public class Game extends ApplicationAdapter
 				sc3.setSize(32, 32);
 				road.setSprite(sc3);
 				
-				road.setPosition(new Vector2(k * 32, j * 32));
+				road.setPosition(new Vector2(k * 32, j * 32));				
 				break;
 			case FINISH:
 				// TODO if player collides with this, end the game

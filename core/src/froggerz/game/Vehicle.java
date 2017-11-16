@@ -6,8 +6,5 @@ public class Vehicle extends Actor{
 		super(game);
 		
 		mMoveComp = new MoveComponent(this);
-		
-		//Move to the left across the screen
-		mMoveComp.setForwardSpeed(-40.0f);
 	}
 }
