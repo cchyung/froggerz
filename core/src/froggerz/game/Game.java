@@ -311,7 +311,7 @@ public class Game extends ApplicationAdapter
 			else if (text.charAt(i) == 'P')
 			{
 				Texture texture = manager.get("police car.png", Texture.class);
-				Actor car = new Vehicle(this);
+				Actor car = new PoliceCar(this);
 				
 				SpriteComponent sc = new SpriteComponent(car, 100);
 				sc.setTexture(texture);
@@ -362,7 +362,6 @@ public class Game extends ApplicationAdapter
 				sc.addImage(texture2);
 				sc.addImage(texture3);
 				sc.addImage(texture4);
-				
 				//Mouth is open all the way, now it needs to gradually close
 				sc.addImage(texture4);
 				sc.addImage(texture3);

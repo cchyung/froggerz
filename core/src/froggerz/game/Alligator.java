@@ -7,5 +7,7 @@ public class Alligator extends Actor
 		super(game);
 		
 		mMoveComp = new MoveComponent(this);
+		
+		mMoveComp.setForwardSpeed(20.0f);
 	}
 }
