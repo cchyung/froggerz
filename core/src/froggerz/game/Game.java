@@ -5,19 +5,28 @@
 
 package froggerz.game;
 
+/**
+ * IDEA
+ * For the web side, have the user choose skins and sign up. When they want to join a game
+ * give them a unique code that connects them to a game. Create 4 unique codes per game.
+ * The code marks the game and also marks which player so you can give them the skin
+ */
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import froggerz.game.Actor.State;
 
@@ -25,11 +34,11 @@ public class Game extends ApplicationAdapter
 {
 	// Constants
 	public static final int WIDTH = 640;  //512?
-	public static final int HEIGHT = 480;   //384?
+	public static final int HEIGHT = 960;   //384?
 	public final float TARGETFPS = 1.0f/60.0f;
 	
-	private final int mLevelWidth = 512;
-	private final int mLevelHeight = 1920;
+	private final int mLevelWidth = 640;
+	private final int mLevelHeight = 960;
 	
 	// Delta Time related
 	private float deltaTime = 0.0f;
@@ -40,8 +49,13 @@ public class Game extends ApplicationAdapter
 	
 	private SpriteBatch batch;
 	private AssetManager manager;  // Keeps track of assets
-	public TextureAtlas atlas = new TextureAtlas();
-	public Animation<TextureRegion> gatorAnimation;
+	public TextureAtlas atlas = new TextureAtlas();  // Why public?
+	public Animation<TextureRegion> gatorAnimation;  // Why public?
+	
+	//private Viewport viewport;
+	private OrthographicCamera camera;
+	
+	
 	
 	public enum TileType 
 	{
@@ -61,9 +75,22 @@ public class Game extends ApplicationAdapter
 		batch = new SpriteBatch();
 		manager = new AssetManager();
 
+		
+		float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
+		//viewport = new ScreenViewport(camera);
+		//viewport.apply();
+		camera = new OrthographicCamera(WIDTH*aspectRatio, HEIGHT);
+		camera.position.set(WIDTH/2, 0, 0);
+		
 		loadData();
 	}
 
+	@Override
+	public void resize(int width, int height) {
+		//viewport.update(width, height);
+		camera.position.set(WIDTH/2, 0, 0);
+	}
+	
 	/**
 	 * Ran when rendering needs to be done
 	 */
@@ -77,7 +104,11 @@ public class Game extends ApplicationAdapter
 		
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		
+		camera.update();
+		
 		batch.begin();
+		batch.setProjectionMatrix(camera.combined);
 		
 		// Draw all the sprites
 		for(SpriteComponent spriteComp: mSprites) 
@@ -218,361 +249,355 @@ public class Game extends ApplicationAdapter
 		
 		// Load level from file
 		FileHandle file = Gdx.files.internal("Level.txt");
-		
-		String text = file.readString();
-		
+
+		String level = file.readString();
+		String[] levelRows = level.split("\n");
+
 		//Parse the file into individual chars
 		TileType tileType = null;
-		int j = 0;
-		int k = -1;
+		
 		//Keep track of how many logs have been made
 		int logCount = 0;
-		for (int i = 0; i < text.length(); i++)
-		{
-			k++;
-			
-			//Load in the types of tiles
-			if (text.charAt(i) == '.') 
-			{
-				tileType = TileType.GRASS;
-			}
-			else if (text.charAt(i) == 'W') 
-			{
-				tileType = TileType.WATER;
-			}
-			else if (text.charAt(i) == 'R') 
-			{
-				tileType = TileType.ROAD;
-			}
-			else if (text.charAt(i) == 'F') 
-			{
-				tileType = TileType.FINISH;
-			}
-			else if (text.charAt(i) == 'T')
-			{
-				tileType = TileType.ROADTOP;
-			}
-			
-			//Load in the actors (vehicles, logs, alligators, frogs)
-			else if (text.charAt(i) == '1')
-			{
-				Texture texture = manager.get("frog classic.png", Texture.class);
-				Actor frog = new Frog(this);
-				
-				SpriteComponent sc = new SpriteComponent(frog, 150);
-				sc.setTexture(texture);
-				sc.setSize(30, 23);
-				frog.setSprite(sc);
-				
-				FrogMove move = new FrogMove(frog);
-				frog.setMove(move);
-				
-				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				tileType = TileType.GRASS;
-			}
-			else if (text.charAt(i) == '2')
-			{
-				Texture texture = manager.get("frog orange.png", Texture.class);
-				Actor frog = new Frog(this);
-				
-				SpriteComponent sc = new SpriteComponent(frog, 150);
-				sc.setTexture(texture);
-				sc.setSize(30, 23);
-				frog.setSprite(sc);
-				
-				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				tileType = TileType.GRASS;
-			}
-			else if (text.charAt(i) == '3')
-			{
-				Texture texture = manager.get("frog black.png", Texture.class);
-				Actor frog = new Frog(this);
-				
-				SpriteComponent sc = new SpriteComponent(frog, 150);
-				sc.setTexture(texture);
-				sc.setSize(30, 23);
-				frog.setSprite(sc);
-				
-				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				tileType = TileType.GRASS;
-			}
-			else if (text.charAt(i) == '4')
-			{
-				Texture texture = manager.get("frog red.png", Texture.class);
-				Actor frog = new Frog(this);
+		
+		for(int j=0; j<levelRows.length; ++j) {
+			String levelRow = levelRows[j];
+			for(int k=0; k<levelRow.length(); ++k) {
+				char levelChar = levelRow.charAt(k);
 
-				SpriteComponent sc = new SpriteComponent(frog, 150);
-				sc.setTexture(texture);
-				sc.setSize(30, 23);
-				frog.setSprite(sc);
-				
-				frog.setPosition(new Vector2(k * 32, j * 32 + 5));
-				tileType = TileType.GRASS;
-			}
-			else if (text.charAt(i) == 'V')
-			{
-				Texture texture = manager.get("blue car.png", Texture.class);
-				Actor car = new Vehicle(this);
-				
-				SpriteComponent sc = new SpriteComponent(car, 100);
-				sc.setTexture(texture);
-				sc.setSize(43, 28);
-				car.setSprite(sc);
-				
-				car.setPosition(new Vector2(k * 32, j * 32 + 5));
-				tileType = TileType.ROAD;
-				
-				//Assign cars to lanes
-				if (car.getPosition().y >= 128 && car.getPosition().y <= 140)
+				//Load in the types of tiles
+				if (levelChar == '.') 
 				{
-					lane1.addVehicleToLane(car);
+					tileType = TileType.GRASS;
 				}
-				
-				else if (car.getPosition().y >= 160 && car.getPosition().y <= 172)
+				else if (levelChar == 'W') 
 				{
-					lane2.addVehicleToLane(car);
+					tileType = TileType.WATER;
 				}
-				
-				else if (car.getPosition().y >= 384 && car.getPosition().y <= 396)
+				else if (levelChar == 'R') 
 				{
-					lane3.addVehicleToLane(car);
+					tileType = TileType.ROAD;
 				}
-				else
+				else if (levelChar == 'F') 
 				{
-					lane4.addVehicleToLane(car);
+					tileType = TileType.FINISH;
 				}
-			}
-			else if (text.charAt(i) == 'C')
-			{
-				Texture texture = manager.get("red car.png", Texture.class);
-				Actor car = new Vehicle(this);
+				else if (levelChar == 'T')
+				{
+					tileType = TileType.ROADTOP;
+				}
 
-				SpriteComponent sc = new SpriteComponent(car, 100);
-				sc.setTexture(texture);
-				sc.setSize(43, 28);
-				car.setSprite(sc);
-				
-				car.setPosition(new Vector2(k * 32, j * 32 + 5));
-				tileType = TileType.ROAD;
-				
-				//Assign cars to lanes
-				if (car.getPosition().y >= 128 && car.getPosition().y <= 140)
+				//Load in the actors (vehicles, logs, alligators, frogs)
+				else if (levelChar == '1')
 				{
-					lane1.addVehicleToLane(car);
-				}
-				
-				else if (car.getPosition().y >= 160 && car.getPosition().y <= 172)
-				{
-					lane2.addVehicleToLane(car);
-				}
-				
-				else if (car.getPosition().y >= 384 && car.getPosition().y <= 396)
-				{
-					lane3.addVehicleToLane(car);
-				}
-				else
-				{
-					lane4.addVehicleToLane(car);
-				}
-			}
-			else if (text.charAt(i) == 'P')
-			{
-				Texture texture = manager.get("police car.png", Texture.class);
-				Actor car = new PoliceCar(this);
-				
-				SpriteComponent sc = new SpriteComponent(car, 100);
-				sc.setTexture(texture);
-				sc.setSize(65, 28);
-				car.setSprite(sc);
-				
-				car.setPosition(new Vector2(k * 32, j * 32 + 5));
-				tileType = TileType.ROADTOP;
-				
-				//Assign cars to lanes
-				if (car.getPosition().y >= 128 && car.getPosition().y <= 140)
-				{
-					lane1.addVehicleToLane(car);
-				}
-				
-				else if (car.getPosition().y >= 160 && car.getPosition().y <= 172)
-				{
-					lane2.addVehicleToLane(car);
-				}
-				
-				else if (car.getPosition().y >= 384 && car.getPosition().y <= 396)
-				{
-					lane3.addVehicleToLane(car);
-				}
-				else
-				{
-					lane4.addVehicleToLane(car);
-				}
-			}
-			else if (text.charAt(i) == 'L')
-			{
-				Texture texture = manager.get("log.png", Texture.class);
-				Actor log = new Log(this);
-				
-				SpriteComponent sc = new SpriteComponent(log, 100);
-				sc.setTexture(texture);
-				
-				//Evenly distribute the log sizes
-				if (logCount % 3 == 0)
-				{
-					sc.setSize(60, 19);
-				}
-				
-				else if (logCount % 3 == 1)
-				{
-					sc.setSize(90, 19);
-				}
-				
-				else if (logCount % 3 == 2)
-				{
-					sc.setSize(120, 19);
-				}
-				
-				log.setSprite(sc);
-				
-				log.setPosition(new Vector2(k * 32, j * 32 + 5));
-				tileType = TileType.WATER;
-				logCount++;
-				
-				//Assign logs to rivers
-				if (log.getPosition().y >= 256 && log.getPosition().y <= 268)
-				{
-					river1.addThingToRiver(log);
-				}
-				
-				else
-				{
-					river2.addThingToRiver(log);
-				}
-			}
-			else if (text.charAt(i) == 'A')
-			{
-				Texture texture = manager.get("gator_0.png", Texture.class);
-				Texture texture1 = manager.get("gator_1.png", Texture.class);
-				Texture texture2 = manager.get("gator_2.png", Texture.class);
-				Texture texture3 = manager.get("gator_3.png", Texture.class);
-				Texture texture4 = manager.get("gator_4.png", Texture.class);
-				Actor gator = new Alligator(this);
+					Texture texture = manager.get("frog classic.png", Texture.class);
+					Actor frog = new Frog(this);
 
-				AnimatedSprite sc = new AnimatedSprite(gator, 100);
-				sc.setTexture(texture); //just need to initialize the texture to something
-				
-				//Add images to the animation...need a lot of copies of the mouth in the closed state
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture);
-				sc.addImage(texture1);
-				sc.addImage(texture2);
-				sc.addImage(texture3);
-				sc.addImage(texture4);
-				//Mouth is open all the way, now it needs to gradually close
-				sc.addImage(texture4);
-				sc.addImage(texture3);
-				sc.addImage(texture2);
-				sc.addImage(texture1);
-				sc.addImage(texture);
-				
-				sc.setSize(100, 19);
-				sc.setSpeed(10.0f);
-				gator.setSprite(sc);
-				
-				gator.setPosition(new Vector2(k * 32, j * 32 + 5));
-				tileType = TileType.WATER;
-				
-				//Assign alligators to rivers
-				if (gator.getPosition().y >= 256 && gator.getPosition().y <= 268)
-				{
-					river1.addThingToRiver(gator);
-				}
-				
-				else
-				{
-					river2.addThingToRiver(gator);
-				}
-			}
-			else if (text.charAt(i) == '\n')
-			{
-				j++;	
-				
-				//k should always have the column's index (0 - 19)
-				//each row has 20 chars plus the endl char
-				k = k - 21;
-			}
+					SpriteComponent sc = new SpriteComponent(frog, 150);
+					sc.setTexture(texture);
+					sc.setSize(30, 23);
+					frog.setSprite(sc);
 
-			switch(tileType) 
-			{
-			case GRASS:
-				Texture texture1 = manager.get("grass.png", Texture.class);
-				Actor grass = new Actor(this);
-				
-				SpriteComponent sc1 = new SpriteComponent(grass, 50);
-				sc1.setTexture(texture1);
-				sc1.setSize(32, 32);
-				grass.setSprite(sc1);
-				
-				grass.setPosition(new Vector2(k * 32, j * 32));
-				break;
-				
-			case WATER:
-				Texture texture2 = manager.get("water.png", Texture.class);
-				Actor water = new Actor(this);
+					FrogMove move = new FrogMove(frog);
+					frog.setMove(move);
 
-				SpriteComponent sc2 = new SpriteComponent(water, 50);
-				sc2.setTexture(texture2);
-				sc2.setSize(32, 32);
-				water.setSprite(sc2);
-				
-				water.setPosition(new Vector2(k * 32, j * 32));
-				break;
-			case ROAD:
-				Texture texture3 = manager.get("road.png", Texture.class);
-				Actor road = new Actor(this);
-				SpriteComponent sc3 = new SpriteComponent(road, 50);
-				sc3.setTexture(texture3);
-				sc3.setSize(32, 32);
-				road.setSprite(sc3);
-				
-				road.setPosition(new Vector2(k * 32, j * 32));				
-				break;
-			case FINISH:
-				// TODO if player collides with this, end the game
-				Texture texture4 = manager.get("finish.png", Texture.class);
-				Actor finish = new Actor(this);
-				
-				SpriteComponent sc4 = new SpriteComponent(finish, 50);
-				sc4.setTexture(texture4);
-				sc4.setSize(32, 32);
-				finish.setSprite(sc4);
-				
-				finish.setPosition(new Vector2(k * 32, j * 32));
-				break;
-			case ROADTOP:
-				Texture texture5 = manager.get("roadtop.png", Texture.class);
-				Actor top = new Actor(this);
-				
-				SpriteComponent sc5 = new SpriteComponent(top, 50);
-				sc5.setTexture(texture5);
-				sc5.setSize(32, 32);
-				top.setSprite(sc5);
-				
-				top.setPosition(new Vector2(k * 32, j * 32));
-				break;
-			}	
+					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
+					tileType = TileType.GRASS;
+				}
+				else if (levelChar == '2')
+				{
+					Texture texture = manager.get("frog orange.png", Texture.class);
+					Actor frog = new Frog(this);
+
+					SpriteComponent sc = new SpriteComponent(frog, 150);
+					sc.setTexture(texture);
+					sc.setSize(30, 23);
+					frog.setSprite(sc);
+
+					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
+					tileType = TileType.GRASS;
+				}
+				else if (levelChar == '3')
+				{
+					Texture texture = manager.get("frog black.png", Texture.class);
+					Actor frog = new Frog(this);
+
+					SpriteComponent sc = new SpriteComponent(frog, 150);
+					sc.setTexture(texture);
+					sc.setSize(30, 23);
+					frog.setSprite(sc);
+
+					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
+					tileType = TileType.GRASS;
+				}
+				else if (levelChar == '4')
+				{
+					Texture texture = manager.get("frog red.png", Texture.class);
+					Actor frog = new Frog(this);
+
+					SpriteComponent sc = new SpriteComponent(frog, 150);
+					sc.setTexture(texture);
+					sc.setSize(30, 23);
+					frog.setSprite(sc);
+
+					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
+					tileType = TileType.GRASS;
+				}
+				else if (levelChar == 'V')
+				{
+					Texture texture = manager.get("blue car.png", Texture.class);
+					Actor car = new Vehicle(this);
+
+					SpriteComponent sc = new SpriteComponent(car, 100);
+					sc.setTexture(texture);
+					sc.setSize(43, 28);
+					car.setSprite(sc);
+
+					car.setPosition(new Vector2(k * 32, j * 32 + 5));
+					tileType = TileType.ROAD;
+
+					//Assign cars to lanes
+					if (car.getPosition().y >= 128 && car.getPosition().y <= 140)
+					{
+						lane1.addVehicleToLane(car);
+					}
+
+					else if (car.getPosition().y >= 160 && car.getPosition().y <= 172)
+					{
+						lane2.addVehicleToLane(car);
+					}
+
+					else if (car.getPosition().y >= 384 && car.getPosition().y <= 396)
+					{
+						lane3.addVehicleToLane(car);
+					}
+					else
+					{
+						lane4.addVehicleToLane(car);
+					}
+				}
+				else if (levelChar == 'C')
+				{
+					Texture texture = manager.get("red car.png", Texture.class);
+					Actor car = new Vehicle(this);
+
+					SpriteComponent sc = new SpriteComponent(car, 100);
+					sc.setTexture(texture);
+					sc.setSize(43, 28);
+					car.setSprite(sc);
+
+					car.setPosition(new Vector2(k * 32, j * 32 + 5));
+					tileType = TileType.ROAD;
+
+					//Assign cars to lanes
+					if (car.getPosition().y >= 128 && car.getPosition().y <= 140)
+					{
+						lane1.addVehicleToLane(car);
+					}
+
+					else if (car.getPosition().y >= 160 && car.getPosition().y <= 172)
+					{
+						lane2.addVehicleToLane(car);
+					}
+
+					else if (car.getPosition().y >= 384 && car.getPosition().y <= 396)
+					{
+						lane3.addVehicleToLane(car);
+					}
+					else
+					{
+						lane4.addVehicleToLane(car);
+					}
+				}
+				else if (levelChar == 'P')
+				{
+					Texture texture = manager.get("police car.png", Texture.class);
+					Actor car = new PoliceCar(this);
+
+					SpriteComponent sc = new SpriteComponent(car, 100);
+					sc.setTexture(texture);
+					sc.setSize(65, 28);
+					car.setSprite(sc);
+
+					car.setPosition(new Vector2(k * 32, j * 32 + 5));
+					tileType = TileType.ROADTOP;
+
+					//Assign cars to lanes
+					if (car.getPosition().y >= 128 && car.getPosition().y <= 140)
+					{
+						lane1.addVehicleToLane(car);
+					}
+
+					else if (car.getPosition().y >= 160 && car.getPosition().y <= 172)
+					{
+						lane2.addVehicleToLane(car);
+					}
+
+					else if (car.getPosition().y >= 384 && car.getPosition().y <= 396)
+					{
+						lane3.addVehicleToLane(car);
+					}
+					else
+					{
+						lane4.addVehicleToLane(car);
+					}
+				}
+				else if (levelChar == 'L')
+				{
+					Texture texture = manager.get("log.png", Texture.class);
+					Actor log = new Log(this);
+
+					SpriteComponent sc = new SpriteComponent(log, 100);
+					sc.setTexture(texture);
+
+					//Evenly distribute the log sizes
+					if (logCount % 3 == 0)
+					{
+						sc.setSize(60, 19);
+					}
+
+					else if (logCount % 3 == 1)
+					{
+						sc.setSize(90, 19);
+					}
+
+					else if (logCount % 3 == 2)
+					{
+						sc.setSize(120, 19);
+					}
+
+					log.setSprite(sc);
+
+					log.setPosition(new Vector2(k * 32, j * 32 + 5));
+					tileType = TileType.WATER;
+					logCount++;
+
+					//Assign logs to rivers
+					if (log.getPosition().y >= 256 && log.getPosition().y <= 268)
+					{
+						river1.addThingToRiver(log);
+					}
+
+					else
+					{
+						river2.addThingToRiver(log);
+					}
+				}
+				else if (levelChar == 'A')
+				{
+					Texture texture = manager.get("gator_0.png", Texture.class);
+					Texture texture1 = manager.get("gator_1.png", Texture.class);
+					Texture texture2 = manager.get("gator_2.png", Texture.class);
+					Texture texture3 = manager.get("gator_3.png", Texture.class);
+					Texture texture4 = manager.get("gator_4.png", Texture.class);
+					Actor gator = new Alligator(this);
+
+					AnimatedSprite sc = new AnimatedSprite(gator, 100);
+					sc.setTexture(texture); //just need to initialize the texture to something
+
+					//Add images to the animation...need a lot of copies of the mouth in the closed state
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture);
+					sc.addImage(texture1);
+					sc.addImage(texture2);
+					sc.addImage(texture3);
+					sc.addImage(texture4);
+					//Mouth is open all the way, now it needs to gradually close
+					sc.addImage(texture4);
+					sc.addImage(texture3);
+					sc.addImage(texture2);
+					sc.addImage(texture1);
+					sc.addImage(texture);
+
+					sc.setSize(100, 19);
+					sc.setSpeed(10.0f);
+					gator.setSprite(sc);
+
+					gator.setPosition(new Vector2(k * 32, j * 32 + 5));
+					tileType = TileType.WATER;
+
+					//Assign alligators to rivers
+					if (gator.getPosition().y >= 256 && gator.getPosition().y <= 268)
+					{
+						river1.addThingToRiver(gator);
+					}
+
+					else
+					{
+						river2.addThingToRiver(gator);
+					}
+				}
+
+				switch(tileType) 
+				{
+				case GRASS:
+					Texture texture1 = manager.get("grass.png", Texture.class);
+					Actor grass = new Actor(this);
+
+					SpriteComponent sc1 = new SpriteComponent(grass, 50);
+					sc1.setTexture(texture1);
+					sc1.setSize(32, 32);
+					grass.setSprite(sc1);
+
+					grass.setPosition(new Vector2(k * 32, j * 32));
+					break;
+
+				case WATER:
+					Texture texture2 = manager.get("water.png", Texture.class);
+					Actor water = new Actor(this);
+
+					SpriteComponent sc2 = new SpriteComponent(water, 50);
+					sc2.setTexture(texture2);
+					sc2.setSize(32, 32);
+					water.setSprite(sc2);
+
+					water.setPosition(new Vector2(k * 32, j * 32));
+					break;
+				case ROAD:
+					Texture texture3 = manager.get("road.png", Texture.class);
+					Actor road = new Actor(this);
+					SpriteComponent sc3 = new SpriteComponent(road, 50);
+					sc3.setTexture(texture3);
+					sc3.setSize(32, 32);
+					road.setSprite(sc3);
+
+					road.setPosition(new Vector2(k * 32, j * 32));				
+					break;
+				case FINISH:
+					// TODO if player collides with this, end the game
+					Texture texture4 = manager.get("finish.png", Texture.class);
+					Actor finish = new Actor(this);
+
+					SpriteComponent sc4 = new SpriteComponent(finish, 50);
+					sc4.setTexture(texture4);
+					sc4.setSize(32, 32);
+					finish.setSprite(sc4);
+
+					finish.setPosition(new Vector2(k * 32, j * 32));
+					break;
+				case ROADTOP:
+					Texture texture5 = manager.get("roadtop.png", Texture.class);
+					Actor top = new Actor(this);
+
+					SpriteComponent sc5 = new SpriteComponent(top, 50);
+					sc5.setTexture(texture5);
+					sc5.setSize(32, 32);
+					top.setSprite(sc5);
+
+					top.setPosition(new Vector2(k * 32, j * 32));
+					break;
+				}	
+			}
 		}
 	}
-
 	
 	/**
 	 * Unloads data relevant to the game
