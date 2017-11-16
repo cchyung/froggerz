@@ -32,7 +32,7 @@ public class Login extends HttpServlet
 		try
 		{
 			Class.forName("com.mysql.jdbc.Driver");
-			// KPTODO this will need to be updated when we move to a permanant database
+			// KPTODO this will need to be updated when we move to a permanent database
 			conn = DriverManager
 					.getConnection("jdbc:mysql://localhost/LoginInformation?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
