@@ -23,3 +23,5 @@ How to build:
  
 Files to serve:
 	Files are located in "html/build/dist"
+
+Game still needs object spawning and collision
