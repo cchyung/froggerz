@@ -5,6 +5,11 @@
 
 package froggerz.game;
 
+// TODO Test if the gwt.xml file needs to import the froggerz.websockets package
+// TODO Test if the WebSocket wrapper works
+// TODO Create a class that contians variables to transport game data via JSON over WebSockets
+// TODO Fix the positioning of the camera and implement scrolling
+
 /**
  * IDEA
  * For the web side, have the user choose skins and sign up. When they want to join a game
@@ -25,10 +30,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import froggerz.game.Actor.State;
+import froggerz.websockets.CloseEvent;
+import froggerz.websockets.GameSocket;
+import froggerz.websockets.GameSocketListener;
 
 public class Game extends ApplicationAdapter 
 {
@@ -55,7 +61,8 @@ public class Game extends ApplicationAdapter
 	//private Viewport viewport;
 	private OrthographicCamera camera;
 	
-	
+	// Server related variables
+	GameSocket gameSocket;
 	
 	public enum TileType 
 	{
@@ -75,6 +82,11 @@ public class Game extends ApplicationAdapter
 		batch = new SpriteBatch();
 		manager = new AssetManager();
 
+		// TODO 
+		/*
+		gameSocket = new GameSocket("ws://localhost:8080/froggerz/server");
+		createListeners(gameSocket);
+		*/
 		
 		float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
 		//viewport = new ScreenViewport(camera);
@@ -135,7 +147,7 @@ public class Game extends ApplicationAdapter
 	/**
 	 * Processes input from the player
 	 */
-	public void processInput() 
+	private void processInput() 
 	{
 		
 		// Process input for all actors
@@ -148,7 +160,7 @@ public class Game extends ApplicationAdapter
 	/**
 	 * Update game variables and states
 	 */
-	public void updateGame() 
+	private void updateGame() 
 	{
 		
 		// Update deltaTime and continue if it meets TARGETFPS
@@ -605,6 +617,7 @@ public class Game extends ApplicationAdapter
 	private void unloadData() 
 	{
 		manager.clear();
+		
 	}
 	
 	/**
@@ -616,6 +629,29 @@ public class Game extends ApplicationAdapter
 		// TODO
 		dispose();
 		Gdx.app.exit();
+	}
+	
+	// TODO Create what the client will listen for for the server
+	/**
+	 * Create the listener(s) the client needs for server communication
+	 * @param gameSocket GameSocket to create the listener(s) for
+	 */
+	private void createListeners(GameSocket gameSocket) {
+		// This listener manages the passing of game variables
+		gameSocket.addListener(new GameSocketListener() {
+
+		    @Override
+		    public void onClose(CloseEvent event) {
+		    }
+
+		    @Override
+		    public void onMessage(String msg) {
+		    }
+
+		    @Override
+		    public void onOpen() {
+		    }
+		});
 	}
 	
 	//////////////////////////////// SETTERS/GETTERS ////////////////////////////////
