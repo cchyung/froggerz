@@ -220,18 +220,14 @@ public class FrogMove extends MoveComponent
 		}
 		if(buttonToUpdate == PressableButton.LEFT) {
 			changeX = -32.0f;
-			changeY = 0.0f;
 		}
 		else if(buttonToUpdate == PressableButton.RIGHT) {
 			changeX = 32.0f;
-			changeY = 0.0f;
 		}
 		else if(buttonToUpdate == PressableButton.UP) {
-			changeX = 0.0f;
 			changeY = 32.0f;
 		}
 		else if(buttonToUpdate  == PressableButton.DOWN) {
-			changeX = 0.0f;
 			changeY = -32.0f;
 		}
 		

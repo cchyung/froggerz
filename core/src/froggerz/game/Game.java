@@ -5,9 +5,7 @@
 
 package froggerz.game;
 
-// TODO Test if the gwt.xml file needs to import the froggerz.websockets package
 // TODO Test if the WebSocket wrapper works
-// TODO Create a class that contians variables to transport game data via JSON over WebSockets
 // TODO Fix the positioning of the camera and implement scrolling
 
 /**
@@ -90,7 +88,7 @@ public class Game extends ApplicationAdapter
 		json = new Json();
 
 		// Game Socket
-		gameSocket = new GameSocket("ws://localhost:8080/froggerz/server");
+		gameSocket = new GameSocket("ws://localhost:8080//Froggerz-html/server");
 		createListeners(gameSocket);
 		
 		float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();

@@ -2,6 +2,8 @@ package froggerz.jsonobjects;
 
 import com.badlogic.gdx.utils.Array;
 
+import froggerz.game.Buttons.PressableButton;
+
 /**
  * Input from a client to update player position on the server
  */
@@ -31,16 +33,20 @@ public class ButtonsJSON {
 	}
 	
 	/**
-	 * @return Array of the 
+	 * @return Button pressed
 	 */
-	public Array<Boolean> getButtonStates(){
-		// Add buttons in the order they were initialized
-		Array<Boolean> pushed = new Array<Boolean>(numOfButtons);
-		pushed.add(left);
-		pushed.add(right);
-		pushed.add(up);
-		pushed.add(down);
-		
-		return pushed;
+	public PressableButton buttonPushed(){
+		if(left) {
+			return PressableButton.LEFT;
+		}
+		else if(right) {
+			return PressableButton.RIGHT;
+		}
+		else if(up) {
+			return PressableButton.UP;
+		}
+		else { //if(down) {
+			return PressableButton.DOWN;
+		}
 	}
 }

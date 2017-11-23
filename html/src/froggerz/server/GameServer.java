@@ -48,6 +48,7 @@ public class GameServer {
 		RunningGame newGame = new RunningGame(gameNumber, this);
 		newGame.addPlayer(socket);
 		runningGames.put(gameNumber, newGame);
+		System.out.println("Game number " + gameNumber + " created!");
 		++gameNumber;
 		return newGame;
 	}
