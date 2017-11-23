@@ -3,4 +3,5 @@
 <module>
 	<source path="froggerz/game" />
 	<source path="froggerz/websockets" />
+	<source path="froggerz/jsonobjects" />
 </module>

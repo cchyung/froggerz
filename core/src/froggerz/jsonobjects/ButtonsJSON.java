@@ -2,24 +2,10 @@ package froggerz.jsonobjects;
 
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * Input from a client to update player position on the server
+ */
 public class ButtonsJSON {
-	
-	/**
-	 * Buttons and their index 
-	 */
-	private enum Buttons{
-		LEFT, RIGHT, UP, DOWN;
-		
-		private transient int totalButtons = 0;
-		private transient int idx;
-		
-		Buttons(){
-			idx = totalButtons;
-			++totalButtons;
-		}
-		
-		public int index() { return idx; }
-	}
 	
 	// Buttons
 	private boolean left = false;
@@ -48,7 +34,7 @@ public class ButtonsJSON {
 	 * @return Array of the 
 	 */
 	public Array<Boolean> getButtonStates(){
-		// Add buttons in the order they were created in the enum Buttons
+		// Add buttons in the order they were initialized
 		Array<Boolean> pushed = new Array<Boolean>(numOfButtons);
 		pushed.add(left);
 		pushed.add(right);

@@ -1,50 +1,28 @@
 package froggerz.jsonobjects;
 
-import com.badlogic.gdx.utils.Array;
-
-import froggerz.game.Actor;
-import froggerz.game.SortSprite;
-import froggerz.game.SpriteComponent;
-
+/**
+ * Data to be sent from the server to the client
+ */
 public class GameDataJSON {
-	private Array<Actor> mActors;
-	private Array<Actor> mDeadActors; 
-	private Array<SpriteComponent> mSprites;
-	private float deltaTime;
-	
-	/**
-	 * Adds an Actor to mActors
-	 * @param actor Actor to add
-	 */
-	public void addActor(Actor actor) 
-	{
-		mActors.add(actor);
-	}
-	
-	/**
-	 * Adds an Actor to mDeadActors
-	 * @param actor Actor to add
-	 */
-	public void addDeadActor(Actor actor) 
-	{
-		mDeadActors.add(actor);
-	}
-	
-	/**
-	 * Adds an Sprite to mSprites
-	 * @param sprite Sprite to add
-	 */
-	public void addSprite(SpriteComponent sprite) 
-	{
-		mSprites.add(sprite);
-		mSprites.sort(new SortSprite());
-	}
+	private String command = "";  // Any specific command from the server
+	private float deltaTime;  // To update all non-player actors
+	private String data = "";
 	
 	/////////////////////////////////////// Setters/Getters ///////////////////////////////////////
+	
+	public void setCommand(String command) {
+		this.command = command;
+	}
 	
 	public void setDeltaTime(float deltaTime) {
 		this.deltaTime = deltaTime;
 	}
 	
+	public String getCommand() {
+		return command;
+	}
 	
+	public float getDeltaTime() {
+		return deltaTime;
+	}
 }

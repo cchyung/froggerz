@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Actor 
 {
-	private Game mGame = null;
-	private State mState = State.EActive;
+	private transient Game mGame = null;
+	private transient State mState = State.EActive;
 	private Vector2 mPosition = Vector2.Zero;
 	private float mRotation = 0.0f;
 	private float mScale = 1.0f;

@@ -180,8 +180,8 @@ public class FrogMove extends MoveComponent
 		}
 
 		// Get game socket to send input to server
-		//GameSocket gameSocket = mOwner.getGame().getGameSocket();
-		//ButtonsJSON buttons = new ButtonsJSON();
+		GameSocket gameSocket = mOwner.getGame().getGameSocket();
+		ButtonsJSON buttons = new ButtonsJSON();
 		
 		// If no direction are pushed, do not move
 		if (!Gdx.input.isKeyPressed(Input.Keys.UP) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)
@@ -189,24 +189,22 @@ public class FrogMove extends MoveComponent
 		{
 			buttonPushed = null;
 		}
+		else {  // Button pressed, send to server
+			if(leftPushed) {
+				buttons.leftPushed();
+			}
+			else if(rightPushed) {
+				buttons.rightPushed();
+			}
+			else if(upPushed) {
+				buttons.upPushed();
+			}
+			else if(downPushed) {
+				buttons.downPushed();
+			}
+		}
 		
-		buttonPushedLast = buttonPushed;
-//		else {  // Button pressed, send to server
-//			if(leftPushed) {
-//				buttons.leftPushed();
-//			}
-//			else if(rightPushed) {
-//				buttons.rightPushed();
-//			}
-//			else if(upPushed) {
-//				buttons.upPushed();
-//			}
-//			else if(downPushed) {
-//				buttons.downPushed();
-//			}
-//		}
-		
-		//gameSocket.send(json.toJson(buttons));
+		gameSocket.send(json.toJson(buttons));
 	}
 	
 	@Override

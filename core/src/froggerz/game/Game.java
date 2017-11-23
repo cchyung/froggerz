@@ -30,8 +30,10 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Json;
 
 import froggerz.game.Actor.State;
+import froggerz.jsonobjects.GameDataJSON;
 import froggerz.websockets.CloseEvent;
 import froggerz.websockets.GameSocket;
 import froggerz.websockets.GameSocketListener;
@@ -62,7 +64,10 @@ public class Game extends ApplicationAdapter
 	private OrthographicCamera camera;
 	
 	// Server related variables
-	GameSocket gameSocket;
+	private GameSocket gameSocket;
+	private String messageFromServer = null;
+	
+	Json json;
 	
 	public enum TileType 
 	{
@@ -81,12 +86,12 @@ public class Game extends ApplicationAdapter
 		
 		batch = new SpriteBatch();
 		manager = new AssetManager();
+		
+		json = new Json();
 
-		// TODO 
-		/*
+		// Game Socket
 		gameSocket = new GameSocket("ws://localhost:8080/froggerz/server");
 		createListeners(gameSocket);
-		*/
 		
 		float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
 		//viewport = new ScreenViewport(camera);
@@ -169,10 +174,21 @@ public class Game extends ApplicationAdapter
 		{
 			return;
 		}
-		else if(deltaTime > .05f) 
+		else (deltaTime > TARGETFPS) 
 		{  // Limit deltaTime
-			deltaTime = 0.05f;
+			deltaTime = TARGETFPS;
 		}
+		
+		// Wait to receive deltaTime and commands from server
+		while(messageFromServer == null){
+			continue;
+		}
+		GameDataJSON dataFromServer = json.fromJson(GameDataJSON.class, messageFromServer);
+		messageFromServer = null;
+		
+		// Process what was sent from the server
+		deltaTime = dataFromServer.getDeltaTime();
+		String command = dataFromServer.getCommand();
 		
 		// Update actors
 		Array<Actor> copyActors = mActors;
@@ -256,8 +272,6 @@ public class Game extends ApplicationAdapter
 		// Texture playerSkin = manager.load(Gdx.files.internal("playerskin.png").path(), Texture.class);
 		
 		manager.finishLoading();  // Block until all assets are loaded
-		
-		
 		
 		// Load level from file
 		FileHandle file = Gdx.files.internal("Level.txt");
@@ -645,7 +659,8 @@ public class Game extends ApplicationAdapter
 		    }
 
 		    @Override
-		    public void onMessage(String msg) {
+		    public void onMessage(String message) {
+		    	messageFromServer = message;
 		    }
 
 		    @Override
@@ -669,7 +684,7 @@ public class Game extends ApplicationAdapter
 	 * Removes an Actor from mActors
 	 * @param actor Actor to remove
 	 */
-	public void removeActor(Actor actor) 
+	public void removeActor(Actor actor)
 	{
 		mActors.removeValue(actor, true);
 	}
@@ -691,6 +706,10 @@ public class Game extends ApplicationAdapter
 	public void removeSprite(SpriteComponent sprite) 
 	{
 		mSprites.removeValue(sprite, true);
+	}
+	
+	public GameSocket getGameSocket() {
+		return gameSocket;
 	}
 	
 }
