@@ -143,4 +143,62 @@ public class UserManager
 		}
 		return success;
 	}
+	
+	/**
+	 * Static function to update the wins entry in the databse
+	 * at the conclusion of a game
+	 * @param username
+	 */
+	public static void onWin(String username)
+	{
+		Connection conn = null;
+		Statement st = null;
+		ResultSet rs = null;
+
+		try
+		{
+			Class.forName("com.mysql.jdbc.Driver");
+			conn = DriverManager.getConnection(
+					"jdbc:mysql://localhost/Froggerz?user=root&password=root&useSSL=false");
+			st = conn.createStatement();
+
+			// Find the number of wins the user currently has
+			int lastNumWins = 0;
+			rs = st.executeQuery("SELECT MAX(wins) as lastNumWins FROM Users");
+			if (rs.next())
+			{
+				lastNumWins = rs.getInt("lastNumWins");
+			}
+			
+			// Update the number of wins
+			++lastNumWins;
+			st.executeUpdate("UPDATE Users SET wins=" + lastNumWins + " WHERE username='" + username + "'");
+		}
+		catch (Exception e)
+		{
+			System.out.println("Error updating wins: " + e.getMessage());
+		}
+		finally
+		{
+			try
+			{
+				if (rs != null)
+				{
+					rs.close();
+				}
+				if (st != null)
+				{
+					st.close();
+				}
+				if (conn != null)
+				{
+					conn.close();
+				}
+			}
+			catch (SQLException sqle)
+			{
+				System.out.println(sqle.getMessage());
+			}
+		}
+	}
 }
