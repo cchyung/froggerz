@@ -7,6 +7,9 @@ package froggerz.game;
 
 // TODO Test if the WebSocket wrapper works
 // TODO Fix the positioning of the camera and implement scrolling
+// TODO Add Collision detection
+// TODO Delete actors when they go off screen
+// TODO Add bounds for the frogs
 
 /**
  * IDEA
@@ -29,6 +32,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.Queue;
 
 import froggerz.game.Actor.State;
 import froggerz.jsonobjects.GameDataJSON;
@@ -51,6 +57,7 @@ public class Game extends ApplicationAdapter
 	
 	// Holds all actors in the game
 	private Array<Actor> mActors;
+	private Array<Actor> mPlayers;  // Players in the game exluding this player
 	private Array<SpriteComponent> mSprites;
 	
 	private SpriteBatch batch;
@@ -63,7 +70,7 @@ public class Game extends ApplicationAdapter
 	
 	// Server related variables
 	private GameSocket gameSocket;
-	private String messageFromServer = null;
+	private Queue<GameDataJSON> messageFromServer;
 	
 	Json json;
 	
@@ -86,6 +93,8 @@ public class Game extends ApplicationAdapter
 		manager = new AssetManager();
 		
 		json = new Json();
+		
+		messageFromServer = new Queue<GameDataJSON>();
 
 		// Game Socket
 		gameSocket = new GameSocket("ws://localhost:8080//Froggerz-html/server");
@@ -165,36 +174,50 @@ public class Game extends ApplicationAdapter
 	 */
 	private void updateGame() 
 	{
-		
+
 		// Update deltaTime and continue if it meets TARGETFPS
-		deltaTime += Gdx.graphics.getDeltaTime();
+		//deltaTime += Gdx.graphics.getDeltaTime();
 		if(deltaTime < TARGETFPS) 
 		{
 			return;
 		}
-		else (deltaTime > TARGETFPS) 
+		else if (deltaTime > TARGETFPS) 
 		{  // Limit deltaTime
 			deltaTime = TARGETFPS;
 		}
-		
-		// Wait to receive deltaTime and commands from server
-		while(messageFromServer == null){
-			continue;
-		}
-		GameDataJSON dataFromServer = json.fromJson(GameDataJSON.class, messageFromServer);
-		messageFromServer = null;
-		
-		// Process what was sent from the server
-		deltaTime = dataFromServer.getDeltaTime();
-		String command = dataFromServer.getCommand();
-		
+
 		// Update actors
 		Array<Actor> copyActors = mActors;
 		for (Actor actor : copyActors)
 		{
 			actor.update(deltaTime);
 		}
+		
+		// Wait to receive the positions of other frogs
+		while(messageFromServer.size == 0){
+		}
+		
+		GameDataJSON dataFromServer = messageFromServer.removeFirst();
+		if(dataFromServer.getCommand().equals("frogPositions")) {
+			dataFromServer = messageFromServer.removeFirst();
 
+			// Create a new frog for each Vector2 in the JsonValue
+			JsonValue frogPositions = new JsonReader().parse(dataFromServer.getPositions());
+			int currentFrog = 0;
+			for (JsonValue entry = frogPositions.child; entry != null; entry = entry.next.next) {
+
+				// Extract Vector2 data from JsonValue, does not matter which frog the position is assigned to because all have skin "frog classic.png"
+				Vector2 vector2 = new Vector2();
+				vector2.x = entry.asFloat();
+				vector2.y = entry.next.asFloat();
+				mPlayers.get(currentFrog).setPosition(vector2);
+			}
+		}
+		// TODO What to do when the game is over
+//		else if(dataFromServer.getCommand().equals("gameOver")) {
+//
+//		}
+		
 		// Get dead actors
 		Array<Actor> deadActors = new Array<Actor>();
 		for (Actor actor : mActors)
@@ -210,11 +233,11 @@ public class Game extends ApplicationAdapter
 		{
 			actor.destroy();
 		}
-		
+
 		deltaTime = 0.0f;
 	}
-	
-	
+
+
 	/**
 	 * Loads data relevant to the game
 	 */
@@ -224,27 +247,27 @@ public class Game extends ApplicationAdapter
 		Lane lane1 = new Lane();
 		lane1.setDirection(-1.0f);
 		lane1.setSpeed(40.0f);
-		
+
 		Lane lane2 = new Lane();
 		lane2.setDirection(1.0f);
 		lane2.setSpeed(70.0f);
-		
+
 		Lane lane3 = new Lane();
 		lane3.setDirection(1.0f);
 		lane3.setSpeed(55.0f);
-		
+
 		Lane lane4 = new Lane();
 		lane4.setDirection(-1.0f);
 		lane4.setSpeed(100.0f);
-		
+
 		River river1 = new River();
 		river1.setDirection(-1.0f);
 		river1.setSpeed(20.0f);
-		
+
 		River river2 = new River();
 		river2.setDirection(1.0f);
 		river2.setSpeed(25.0f);
-		
+
 		//Load all of the assets
 		manager.load(Gdx.files.internal("blue car.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("finish.png").path(), Texture.class);
@@ -268,9 +291,9 @@ public class Game extends ApplicationAdapter
 		manager.load(Gdx.files.internal("roadtop.png").path(), Texture.class);
 		// TODO Get the players skins from server
 		// Texture playerSkin = manager.load(Gdx.files.internal("playerskin.png").path(), Texture.class);
-		
+
 		manager.finishLoading();  // Block until all assets are loaded
-		
+
 		// Load level from file
 		FileHandle file = Gdx.files.internal("Level.txt");
 
@@ -279,10 +302,10 @@ public class Game extends ApplicationAdapter
 
 		//Parse the file into individual chars
 		TileType tileType = null;
-		
+
 		//Keep track of how many logs have been made
 		int logCount = 0;
-		
+
 		for(int j=0; j<levelRows.length; ++j) {
 			String levelRow = levelRows[j];
 			for(int k=0; k<levelRow.length(); ++k) {
@@ -313,57 +336,18 @@ public class Game extends ApplicationAdapter
 				//Load in the actors (vehicles, logs, alligators, frogs)
 				else if (levelChar == '1')
 				{
-					Texture texture = manager.get("frog classic.png", Texture.class);
-					Actor frog = new Frog(this);
-
-					SpriteComponent sc = new SpriteComponent(frog, 150);
-					sc.setTexture(texture);
-					sc.setSize(30, 23);
-					frog.setSprite(sc);
-
-					FrogMove move = new FrogMove(frog);
-					frog.setMove(move);
-
-					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
 					tileType = TileType.GRASS;
 				}
 				else if (levelChar == '2')
 				{
-					Texture texture = manager.get("frog orange.png", Texture.class);
-					Actor frog = new Frog(this);
-
-					SpriteComponent sc = new SpriteComponent(frog, 150);
-					sc.setTexture(texture);
-					sc.setSize(30, 23);
-					frog.setSprite(sc);
-
-					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
 					tileType = TileType.GRASS;
 				}
 				else if (levelChar == '3')
 				{
-					Texture texture = manager.get("frog black.png", Texture.class);
-					Actor frog = new Frog(this);
-
-					SpriteComponent sc = new SpriteComponent(frog, 150);
-					sc.setTexture(texture);
-					sc.setSize(30, 23);
-					frog.setSprite(sc);
-
-					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
 					tileType = TileType.GRASS;
 				}
 				else if (levelChar == '4')
 				{
-					Texture texture = manager.get("frog red.png", Texture.class);
-					Actor frog = new Frog(this);
-
-					SpriteComponent sc = new SpriteComponent(frog, 150);
-					sc.setTexture(texture);
-					sc.setSize(30, 23);
-					frog.setSprite(sc);
-
-					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
 					tileType = TileType.GRASS;
 				}
 				else if (levelChar == 'V')
@@ -621,6 +605,61 @@ public class Game extends ApplicationAdapter
 				}	
 			}
 		}
+
+		// Wait to receive this players position from the server
+		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("startPostision")){
+			// Message does not have the players initial position, discard it
+			if(messageFromServer.size != 0) {
+				messageFromServer.removeFirst();
+			}
+
+			GameDataJSON dataFromServer = messageFromServer.removeFirst();
+
+			// Process what was sent from the server
+			Vector2 playerPos = json.fromJson(Vector2.class, dataFromServer.getData());
+
+			// TODO put the skin of the player here
+			Texture texture = manager.get("frog orange.png", Texture.class);
+			Actor frog = new Frog(this);
+
+			SpriteComponent sc = new SpriteComponent(frog, 150);
+			sc.setTexture(texture);
+			sc.setSize(30, 23);
+			frog.setSprite(sc);
+			frog.setPosition(playerPos);
+
+			// Wait to receive the positions of other frogs
+			while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("frogPositions")){
+				// Message does not have the other frogs positions, discard it
+				if(messageFromServer.size != 0) {
+					messageFromServer.removeFirst();
+				}
+			}
+
+			dataFromServer = messageFromServer.removeFirst();
+
+			// Create a new frog for each Vector2 in the JsonValue
+			JsonValue frogPositions = new JsonReader().parse(dataFromServer.getPositions());
+			for (JsonValue entry = frogPositions.child; entry != null; entry = entry.next.next) {
+				texture = manager.get("frog classic.png", Texture.class);
+				frog = new Frog(this);
+
+				// Non player frogs should be drawn under the player
+				sc = new SpriteComponent(frog, 125);
+				sc.setTexture(texture);
+				sc.setSize(30, 23);
+				frog.setSprite(sc);
+				frog.setMove(null);  // Frog does not move based off of this players input
+
+				// Extract Vector2 data from JsonValue
+				Vector2 vector2 = new Vector2();
+				vector2.x = entry.asFloat();
+				vector2.y = entry.next.asFloat();
+				frog.setPosition(vector2);
+
+				mPlayers.add(frog);
+			}
+		}
 	}
 	
 	/**
@@ -658,7 +697,7 @@ public class Game extends ApplicationAdapter
 
 		    @Override
 		    public void onMessage(String message) {
-		    	messageFromServer = message;
+		    	messageFromServer.addLast(json.fromJson(GameDataJSON.class, message));
 		    }
 
 		    @Override

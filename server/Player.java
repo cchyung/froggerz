@@ -69,11 +69,6 @@ public class Player{
 	public void setPosition(float x, float y) {
 		position.x = x;
 		position.y = y;
-		// Send position to the player
-		GameDataJSON data = new GameDataJSON();
-		data.setCommand("startPosition");
-		data.setData(json.toJson(position));
-		writeMessage(json.toJson(data));
 	}
 	
 	public Vector2 getPosition() {

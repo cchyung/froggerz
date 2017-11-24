@@ -7,5 +7,6 @@
 	<entry-point class='froggerz.game.client.HtmlLauncher' />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>
 	<set-configuration-property name="gdx.assetpath" value="../core/assets" />
+	<extend-configuration-property name="gdx.reflect.include" value="com.badlogic.gdx.math.Vector2" />
 	<extend-configuration-property name="gdx.reflect.include" value="froggerz.game.jsonobjects" />
 </module>

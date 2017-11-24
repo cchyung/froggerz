@@ -84,6 +84,8 @@ public class RunningGame extends Thread {
 		// Send positions of players to other players
 		for (Map.Entry<Session, Player> sendToPlayer : players.entrySet()) {
 			GameDataJSON data = new GameDataJSON();
+			data.setCommand("frogPositions");
+			ArrayList<Vector2> positions = new ArrayList<Vector2>();
 			
 			for (Map.Entry<Session, Player> playerToSend : players.entrySet()) { 
 				// Don't send the position of this player to 
@@ -91,10 +93,10 @@ public class RunningGame extends Thread {
 					continue;
 				}
 				
-				data.addPosition(playerToSend.getValue().getPosition());
+				positions.add(playerToSend.getValue().getPosition());
 			}
 			
-			sendToPlayer.getValue().writeMessage(json.toJson(data));
+			data.setPositions(json.toJson(positions));
 		}
 	}
 
@@ -122,6 +124,12 @@ public class RunningGame extends Thread {
 		Player newPlayer = new Player(players.size(), session);
 		newPlayer.setPosition((players.size()+1) * 160.0f, 32.0f);
 		players.put(session, newPlayer);
+		
+		// Send position to the player
+		GameDataJSON data = new GameDataJSON();
+		data.setCommand("startPosition");
+		data.setData(json.toJson(newPlayer.getPosition()));
+		newPlayer.writeMessage(json.toJson(data));
 		
 		if(gameFull()) {
 			this.start();  // Start the game
