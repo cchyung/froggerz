@@ -20,13 +20,14 @@ public class UserManager
 	 * @return true iff username and password match an entry in the database,
 	 *         false otherwise
 	 */
-	public static boolean authenticate(String username, String password)
+	public static User authenticate(String username, String password)
 	{
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
 		Boolean valid = false;
 		String dbPassword = null;
+		User out = null;
 
 		try
 		{
@@ -41,6 +42,10 @@ public class UserManager
 			{
 				dbPassword = rs.getString("password");
 				valid = (dbPassword.equals(password));
+				if(valid) {
+					int numWins = rs.getInt("wins");
+					out = new User(username, password, numWins);
+				}
 			}
 
 		}
@@ -74,7 +79,7 @@ public class UserManager
 				System.out.println(sqle.getMessage());
 			}
 		}
-		return valid;
+		return out;
 	}
 
 	/**
@@ -84,12 +89,12 @@ public class UserManager
 	 * @return true iff inserted successfully, false otherwise (ex: username
 	 *         taken)
 	 */
-	public static Boolean signup(String username, String password)
+	public static User signup(String username, String password)
 	{
 		Connection conn = null;
 		Statement st = null;
 		ResultSet rs = null;
-		Boolean success = false;
+		User out = null;
 
 		try
 		{
@@ -111,13 +116,12 @@ public class UserManager
 			String sql = "INSERT INTO Users VALUES " + "(" + lastID + ",'"
 					+ username + "','" + password + "', 0)";
 			st.executeUpdate(sql);
-			success = true;
+			out = new User(username, password, 0);
 
 		}
 		catch (Exception e)
 		{
 			System.out.println("Error inserting user into database: " + e.getMessage());
-			success = false;
 		}
 		finally
 		{
@@ -141,6 +145,6 @@ public class UserManager
 				System.out.println(sqle.getMessage());
 			}
 		}
-		return success;
+		return out;
 	}
 }

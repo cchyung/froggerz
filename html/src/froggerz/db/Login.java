@@ -9,19 +9,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/Login")
-public class Login extends HttpServlet
-{
+public class Login extends HttpServlet {
 	public static final long serialVersionUID = 1;
 
 	protected void service(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException
-	{
+			throws ServletException, IOException {
 		final String username = request.getParameter("username");
-		final String password= request.getParameter("password");
-		Boolean success = UserManager.authenticate(username, password);
-		
-		// TODO success will be true iff user was authenticated
+		final String password = request.getParameter("password");
+		User user = UserManager.authenticate(username, password);
+		request.setAttribute("user", user);
 
-		request.getRequestDispatcher("/userInfo.jsp").forward(request, response);
+		if (user == null) {
+			request.setAttribute("message", "Invalid Username and password");
+			request.getRequestDispatcher("/index.jsp").forward(request, response);
+		} else {
+			request.getRequestDispatcher("/userInfo.jsp").forward(request, response);
+		}
 	}
 }
