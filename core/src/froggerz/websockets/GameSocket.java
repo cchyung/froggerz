@@ -27,10 +27,11 @@ public class GameSocket {
 	 * @param url Url of the server the GameSocket is connecting to
 	 */
 	private native void nativeOpen(GameSocket gs, String name, String url) /*-{
+		alert("STARTING THE WEBSOCKET");
 	    $wnd[name] = new WebSocket(url);
 	    $wnd[name].onopen = function() { gs.@froggerz.websockets.GameSocket::onOpen()(); };
 	    $wnd[name].onclose = function(event) { gs.@froggerz.websockets.GameSocket::onClose(SLjava/lang/String;Z)(event.code, event.reason, event.wasClean); };    
-	    $wnd[name].onmessage = function(message) { gs.@froggerz.websockets.GameSocket::onMessage(Ljava/lang/String;)(message.data); }
+	    $wnd[name].onmessage = function(message) { alert("HEY YOU GOT A MESSAGE"); gs.@froggerz.websockets.GameSocket::onMessage(Ljava/lang/String;)(message.data); }
 	}-*/;
 	// For error callback $wnd[name].onerror = function() { gs.@froggerz.websockets.GameSocket::onError()(); };
 	
@@ -82,9 +83,13 @@ public class GameSocket {
 	 * @param message Message to be sent
 	 */
 	protected void onMessage(String message) {
+		debug("before sending listeners");
         for (GameSocketListener listener : listeners) {
+        	debug("about to send message to listener");
         	listener.onMessage(message);
+        	debug("sent message to listener");
         }
+        debug("after sending listeners");
     }
 	
 	/**
@@ -122,4 +127,8 @@ public class GameSocket {
     public void removeListener(GameSocketListener listener) {
     	listeners.remove(listener);
     }
+    
+    private native void debug(String alert) /*-{
+		alert(alert);
+	}-*/;
 }
