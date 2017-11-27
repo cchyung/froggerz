@@ -1,24 +1,33 @@
 package froggerz.websockets;
 
+import froggerz.game.Game;
+
 /**
  * Java interface for JavaScript WebSocket listener
  */
-public interface GameSocketListener {
+public class GameSocketListener {
+	private Game game = null;
 	
 	/**
 	 * What the listener should do when closed
 	 * @param event
 	 */
-	void onClose(CloseEvent event);
+	public void onClose(CloseEvent event){}
 
 	/**
 	 * What the listener should do when a message is received
 	 * @param message
 	 */
-    void onMessage(String message);
-
+	public void onMessage(String message){
+    	game.addQueue(message);
+    }
+    
     /**
      * What the listener should do when opened
      */
-    void onOpen();
+	public void onOpen(){}
+    
+    public void setGame(Game game) {
+    	this.game = game;
+    }
 }

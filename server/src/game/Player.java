@@ -1,5 +1,4 @@
-package froggerz.server;
-
+package game;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,25 +6,22 @@ import java.util.List;
 
 import javax.websocket.Session;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Json;
+import com.google.gson.Gson;
 
-import froggerz.game.Buttons.PressableButton;
-import froggerz.jsonobjects.ButtonsJSON;
-import froggerz.jsonobjects.GameDataJSON;
+import game.Buttons.PressableButton;
 
 public class Player{
 	private int playerNum;
 	private Session session;
 	private List<PressableButton> buttonsPressed;
-	private Json json;
+	private Gson gson;
 	private Vector2 position = Vector2.Zero;
 	
 	public Player(int playerNum, Session session) {
 		this.playerNum = playerNum;
 		this.buttonsPressed = new ArrayList<PressableButton>();
 		buttonsPressed = Collections.synchronizedList(buttonsPressed);
-		json = new Json();
+		gson = new Gson();
 		this.session = session;
 	}
 	
@@ -46,7 +42,7 @@ public class Player{
 	 * @param message JSON string
 	 */
 	public void processMessage(String message) {
-		ButtonsJSON clientData = json.fromJson(ButtonsJSON.class, message);
+		ButtonsJSON clientData = gson.fromJson(message, ButtonsJSON.class);
 		PressableButton button = clientData.buttonPushed();
 		synchronized(buttonsPressed) {
 			buttonsPressed.add(button);

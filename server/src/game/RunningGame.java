@@ -1,17 +1,15 @@
-package froggerz.server;
+package game;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.websocket.Session;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Json;
+import com.google.gson.Gson;
 
-import froggerz.game.Buttons.PressableButton;
-import froggerz.jsonobjects.GameDataJSON;
+import game.Buttons.PressableButton;
+import servlet.ServerSocket;
 
 /**
  * Contains methods and variables needed for a running game
@@ -23,20 +21,26 @@ public class RunningGame extends Thread {
 	private ServerSocket gameServer;
 	private ConcurrentHashMap<Session, Player> players;
 	private boolean gameOver = false;
-	private Json json;
+	private Gson gson;
 	
 	public RunningGame(int gameNumber, ServerSocket gameServer) {
+		System.out.println("Entering the constructor");
 		this.gameServer = gameServer;
 		this.gameNumber = gameNumber;	
 		this.players = new ConcurrentHashMap<Session, Player>(maxPlayers);
-		this.json = new Json();
+		System.out.println("Before GSON");
+		this.gson = new Gson();
+		System.out.println("Exiting the constructor");
 	}
 	
 	public void run() {
+		// Send the frogs start positions
+		updateGame();
+		
 		// Send signal to start the game
 		GameDataJSON data = new GameDataJSON();
 		data.setCommand("start");
-		broadcast(json.toJson(data));
+		broadcast(gson.toJson(data));
 		
 		while(!gameOver) {
 			updateGame();
@@ -96,7 +100,7 @@ public class RunningGame extends Thread {
 				positions.add(playerToSend.getValue().getPosition());
 			}
 			
-			data.setPositions(json.toJson(positions));
+			data.setPositions(gson.toJson(positions));
 		}
 	}
 
@@ -120,18 +124,20 @@ public class RunningGame extends Thread {
 	}
 	
 	public synchronized void addPlayer(Session session) {	
-		
+		System.out.println("Adding player to game");
 		Player newPlayer = new Player(players.size(), session);
 		newPlayer.setPosition((players.size()+1) * 160.0f, 32.0f);
 		players.put(session, newPlayer);
-		
+		System.out.println("Added player");
 		// Send position to the player
 		GameDataJSON data = new GameDataJSON();
 		data.setCommand("startPosition");
-		data.setData(json.toJson(newPlayer.getPosition()));
-		newPlayer.writeMessage(json.toJson(data));
-		
+		data.setData(gson.toJson(newPlayer.getPosition()));
+		System.out.println(gson.toJson(data));
+		newPlayer.writeMessage(gson.toJson(data));
+		System.out.println("Sending players starting position");
 		if(gameFull()) {
+			System.out.println("Last player added, starting game");
 			this.start();  // Start the game
 		}
 	}

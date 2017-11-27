@@ -40,7 +40,8 @@ import froggerz.game.Actor.State;
 import froggerz.jsonobjects.GameDataJSON;
 import froggerz.websockets.CloseEvent;
 import froggerz.websockets.GameSocket;
-import froggerz.websockets.GameSocketListener;
+import froggerz.websockets.Websocket;
+import froggerz.websockets.WebsocketListener;
 
 public class Game extends ApplicationAdapter 
 {
@@ -69,8 +70,8 @@ public class Game extends ApplicationAdapter
 	private OrthographicCamera camera;
 	
 	// Server related variables
-	private GameSocket gameSocket;
-	private Queue<GameDataJSON> messageFromServer;
+	private Websocket gameSocket;
+	private static Queue<GameDataJSON> messageFromServer;
 	
 	Json json;
 	
@@ -97,7 +98,7 @@ public class Game extends ApplicationAdapter
 		messageFromServer = new Queue<GameDataJSON>();
 
 		// Game Socket
-		gameSocket = new GameSocket("ws://localhost:8080/froggerz/server");
+		gameSocket = new Websocket("ws://localhost:8080/froggerz/server");
 		createListeners(gameSocket);
 		gameSocket.open();
 		
@@ -607,79 +608,79 @@ public class Game extends ApplicationAdapter
 			}
 		}  // End level loading from file
 
-		// Wait to receive this players position from the server
-		debug("Before first while loop");  // DEBUG
-		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("startPosition")){
-			// Message does not have the players initial position, discard it
-			debug("before if statement");  // DEBUG
-			if(messageFromServer.size != 0) {
-				messageFromServer.removeFirst();
-				debug("At end of the if");  // DEBUG
-			}
-		}
-		debug("After the end of the first while loop");  // DEBUG
-
-		GameDataJSON dataFromServer = messageFromServer.removeFirst();
-		
-		debug("After getting the first data thingy");  // DEBUG
-		// Process what was sent from the server
-		Vector2 playerPos = json.fromJson(Vector2.class, dataFromServer.getData());
-
-		// TODO put the skin of the player here
-		Texture texture = manager.get("frog orange.png", Texture.class);
-		Actor frog = new Frog(this);
-
-		SpriteComponent sc = new SpriteComponent(frog, 150);
-		sc.setTexture(texture);
-		sc.setSize(30, 23);
-		frog.setSprite(sc);
-		frog.setPosition(playerPos);
-
-		debug("WAITING for POSITIONS of OTHER frogs");  // DEBUG
-		// Wait to receive the positions of other frogs
-		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("frogPositions")){
-			// Message does not have the other frogs positions, discard it
-			if(messageFromServer.size != 0) {
-				messageFromServer.removeFirst();
-			}
-		}
-		debug("Got positions of other frogs");  // DEBUG
-
-		dataFromServer = messageFromServer.removeFirst();
-
-		debug("PROCESSING POSITON OF OTHER FROGS");  // DEBUG
-		// Create a new frog for each Vector2 in the JsonValue
-		JsonValue frogPositions = new JsonReader().parse(dataFromServer.getPositions());
-		for (JsonValue entry = frogPositions.child; entry != null; entry = entry.next.next) {
-			texture = manager.get("frog classic.png", Texture.class);
-			frog = new Frog(this);
-
-			// Non player frogs should be drawn under the player
-			sc = new SpriteComponent(frog, 125);
-			sc.setTexture(texture);
-			sc.setSize(30, 23);
-			frog.setSprite(sc);
-			frog.setMove(null);  // Frog does not move based off of this players input
-
-			// Extract Vector2 data from JsonValue
-			Vector2 vector2 = new Vector2();
-			vector2.x = entry.asFloat();
-			vector2.y = entry.next.asFloat();
-			frog.setPosition(vector2);
-
-			mPlayers.add(frog);
-		}
-		debug("Initialized all of the other frogs");  // DEBUG
-		
-		// Wait for the command to start the game
-		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("start")){
-			// Message does not have the other frogs positions, discard it
-			if(messageFromServer.size != 0) {
-				messageFromServer.removeFirst();
-			}
-		}
-		messageFromServer.removeFirst();
-		debug("EVERYTHING HAS LOADED");  // DEBUG
+//		// Wait to receive this players position from the server
+//		debug("Before first while loop");  // DEBUG
+//		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("startPosition")){
+//			// Message does not have the players initial position, discard it
+//			debug("before if statement");  // DEBUG
+//			if(messageFromServer.size != 0) {
+//				messageFromServer.removeFirst();
+//				debug("At end of the if");  // DEBUG
+//			}
+//		}
+//		debug("After the end of the first while loop");  // DEBUG
+//
+//		GameDataJSON dataFromServer = messageFromServer.removeFirst();
+//		
+//		debug("After getting the first data thingy");  // DEBUG
+//		// Process what was sent from the server
+//		Vector2 playerPos = json.fromJson(Vector2.class, dataFromServer.getData());
+//
+//		// TODO put the skin of the player here
+//		Texture texture = manager.get("frog orange.png", Texture.class);
+//		Actor frog = new Frog(this);
+//
+//		SpriteComponent sc = new SpriteComponent(frog, 150);
+//		sc.setTexture(texture);
+//		sc.setSize(30, 23);
+//		frog.setSprite(sc);
+//		frog.setPosition(playerPos);
+//
+//		debug("WAITING for POSITIONS of OTHER frogs");  // DEBUG
+//		// Wait to receive the positions of other frogs
+//		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("frogPositions")){
+//			// Message does not have the other frogs positions, discard it
+//			if(messageFromServer.size != 0) {
+//				messageFromServer.removeFirst();
+//			}
+//		}
+//		debug("Got positions of other frogs");  // DEBUG
+//
+//		dataFromServer = messageFromServer.removeFirst();
+//
+//		debug("PROCESSING POSITON OF OTHER FROGS");  // DEBUG
+//		// Create a new frog for each Vector2 in the JsonValue
+//		JsonValue frogPositions = new JsonReader().parse(dataFromServer.getPositions());
+//		for (JsonValue entry = frogPositions.child; entry != null; entry = entry.next.next) {
+//			texture = manager.get("frog classic.png", Texture.class);
+//			frog = new Frog(this);
+//
+//			// Non player frogs should be drawn under the player
+//			sc = new SpriteComponent(frog, 125);
+//			sc.setTexture(texture);
+//			sc.setSize(30, 23);
+//			frog.setSprite(sc);
+//			frog.setMove(null);  // Frog does not move based off of this players input
+//
+//			// Extract Vector2 data from JsonValue
+//			Vector2 vector2 = new Vector2();
+//			vector2.x = entry.asFloat();
+//			vector2.y = entry.next.asFloat();
+//			frog.setPosition(vector2);
+//
+//			mPlayers.add(frog);
+//		}
+//		debug("Initialized all of the other frogs");  // DEBUG
+//		
+//		// Wait for the command to start the game
+//		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("start")){
+//			// Message does not have the other frogs positions, discard it
+//			if(messageFromServer.size != 0) {
+//				messageFromServer.removeFirst();
+//			}
+//		}
+//		messageFromServer.removeFirst();
+//		debug("EVERYTHING HAS LOADED");  // DEBUG
 	}
 
 	/**
@@ -707,27 +708,25 @@ public class Game extends ApplicationAdapter
 	 * Create the listener(s) the client needs for server communication
 	 * @param gameSocket GameSocket to create the listener(s) for
 	 */
-	private void createListeners(GameSocket gameSocket) {
+	private void createListeners(Websocket gameSocket) {
 		// This listener manages the passing of game variables
-		gameSocket.addListener(new GameSocketListener() {
+		gameSocket.addListener(new WebsocketListener() {
 
 		    @Override
 		    public void onClose(CloseEvent event) {
+			    // do something on close
 		    }
 
 		    @Override
-		    public void onMessage(String message) {
-		    	debug("In onMessage");
-		    	debug(json.prettyPrint(message));  // DEBUG
+		    public void onMessage(String msg) {
+		        // a message is received
+		    	Game.addQueue(msg);
 		    	
-		    	GameDataJSON temp = json.fromJson(GameDataJSON.class, message);
-		    	debug("In onMessage");
-		    	messageFromServer.addLast(temp);
-		    	debug("Added to the queue");
 		    }
 
 		    @Override
 		    public void onOpen() {
+		        // do something on open
 		    }
 		});
 	}
@@ -771,11 +770,21 @@ public class Game extends ApplicationAdapter
 		mSprites.removeValue(sprite, true);
 	}
 	
-	public GameSocket getGameSocket() {
+	public static void addQueue(String message) {
+		Json json = new Json();
+		debug("In addQueue");
+		debug("Data: " + json.prettyPrint(message));
+		GameDataJSON data = json.fromJson(GameDataJSON.class, message);
+		debug("Loaded in data");
+		messageFromServer.addLast(data);
+		debug("Added data to queue");
+	}
+	
+	public Websocket getGameSocket() {
 		return gameSocket;
 	}
 	
-	private native void debug(String alert) /*-{
+	private static native void debug(String alert) /*-{
 		alert(alert);
 	}-*/;
 	

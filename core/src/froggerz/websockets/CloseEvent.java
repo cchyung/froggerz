@@ -1,14 +1,13 @@
 package froggerz.websockets;
 
-/**
- * Provides a Java implementation of the JavaScript CloseEvent
- */
+
 public class CloseEvent {
-	private final short code;  // Close code to sent by the server
-	private final String reason;  // DOMString the reason why the server closed the connection
-	private final boolean wasClean;  // True if the connection was cleanly closed, false otherwise
-	
-	public CloseEvent(short code, String reason, boolean wasClean) {
+
+    private final short code;
+    private final String reason;
+    private final boolean wasClean;
+
+    public CloseEvent(short code, String reason, boolean wasClean) {
         this.code = code;
         this.reason = reason;
         this.wasClean = wasClean;
