@@ -6,9 +6,9 @@ import java.util.concurrent.Executors;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
 
 import froggerz.jsonobjects.ButtonsJSON;
-import froggerz.jsonobjects.GameDataJSON;
 
 public class GameListener extends Listener {
 	private static ConcurrentHashMap<Integer, RunningGame> runningGames = new ConcurrentHashMap<Integer, RunningGame>();
@@ -16,9 +16,14 @@ public class GameListener extends Listener {
 	private static ConcurrentHashMap<Connection, RunningGame> connectedPlayers = new ConcurrentHashMap<Connection, RunningGame>();
 	private static int gameNumber = 0;
 	private static ExecutorService executors = Executors.newCachedThreadPool();
+	private Server server;
+
+	public GameListener(Server server) {
+		this.server = server;
+	}
 	
 	public void connected(Connection connection) {
-		System.out.println("Player has connected!");
+		System.out.println("Player has connected! " + connection.getID());
 		if(currentOpenGame == null) {  // First game ever
 			//System.out.println("Creating game and adding player to it");
 			createGame(connection);
@@ -65,7 +70,7 @@ public class GameListener extends Listener {
 	 */
 	public RunningGame createGame(Connection connection) {
 		//System.out.println("In creating game");
-		RunningGame newGame = new RunningGame(gameNumber, this);
+		RunningGame newGame = new RunningGame(gameNumber, server, this);
 		//System.out.println("Put into map");
 		runningGames.put(gameNumber, newGame);
 		newGame.addPlayer(connection);

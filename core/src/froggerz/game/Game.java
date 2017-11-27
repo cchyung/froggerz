@@ -74,7 +74,7 @@ public class Game extends ApplicationAdapter
 	
 	// Server related variables
 	private Client client;
-	private Queue<GameDataJSON> messageFromServer;
+	private Queue<Object> messageFromServer;
 	
 	public enum TileType 
 	{
@@ -94,6 +94,8 @@ public class Game extends ApplicationAdapter
 		
 		batch = new SpriteBatch();
 		manager = new AssetManager();
+		
+		messageFromServer = new Queue<Object>();
 		
 		client = new Client(262144,65536);
 		client.start();
@@ -123,10 +125,7 @@ public class Game extends ApplicationAdapter
 //			}
 //		});
 //		
-	    kryo.register(String.class, 1);
-//	    kryo.register(com.badlogic.gdx.utils.Array.class);
-//	    kryo.register(Object[].class);
-//	    kryo.register(Array[].class);
+		kryo.register(PositionPacket.class, 1);
 	    kryo.register(ButtonsJSON.class, 2);
 	    kryo.register(GameDataJSON.class, new Serializer<GameDataJSON>() {
 	    	{
@@ -134,11 +133,11 @@ public class Game extends ApplicationAdapter
 	    	}
 
 	    	public void write (Kryo kryo, Output output, GameDataJSON data) {
-	    		output.writeInt(data.getCommand(), true);
+	    		output.writeInt(data.getCommand());
 	    		
 	    		// Write vectors
 	    		int length = data.getPositions().size;
-	    		output.writeInt(length, true);
+	    		output.writeInt(length);
 	    		//if (length == 0) return;
 	    		for (int i = 0, n = data.getPositions().size; i < n; i++) {
 	    			output.writeFloat(data.getPositions().get(i).x);
@@ -149,12 +148,12 @@ public class Game extends ApplicationAdapter
 	    	public GameDataJSON read (Kryo kryo, Input input, Class<GameDataJSON> type) {
 	    		System.out.println("Starting to deserialize");
 	    		GameDataJSON data = new GameDataJSON();
-	    		int command = input.readInt(true);
+	    		int command = input.readInt();
 	    		data.setCommand(command);
 	    		
 	    		Array<Vector2> array = new Array<Vector2>();
 	    		kryo.reference(array);
-	    		int length = input.readInt(true);
+	    		int length = input.readInt();
 	    		array.ensureCapacity(length);
 	    		for (int i = 0; i < length; i++) {
 	    			Vector2 vector = new Vector2();
@@ -177,12 +176,19 @@ public class Game extends ApplicationAdapter
 		        	  GameDataJSON response = (GameDataJSON)object;
 		        	  System.out.println("Casted to GameData");
 		        	  addQueue(response);
-		             System.out.println("Received: " + response.getCommand());
+		        	  System.out.println("Received: " + response.getCommand());
+		          }
+		          if (object instanceof PositionPacket) {
+		        	  System.out.println("Object is PositionPacket");
+		        	  PositionPacket response = (PositionPacket)object;
+		        	  System.out.println("Casted to PositionPacket");
+		        	  addQueue(response);
+		        	  System.out.println("");
+		        	  System.out.println("Received vector2: " + response.vector2);
+		        	  System.out.println("Received playerNum: " + response.playerNum);
 		          }
 		       }
 		    });
-		
-		messageFromServer = new Queue<GameDataJSON>();
 		
 		loadData();
 		
@@ -658,13 +664,25 @@ public class Game extends ApplicationAdapter
 
 		System.out.println("Waiting for first postion");
 		// Wait to receive this players position from the server
-		while(messageFromServer.size == 0){
+		while(true){
+			if(messageFromServer.size == 0) {
+				continue;
+			}
+			Object data = messageFromServer.first();
+			System.out.println("Getting data from queue");
+			if (data instanceof GameDataJSON) {
+				messageFromServer.removeFirst();
+			}
+			else {
+				break;  // Received first position packet
+			}
 		}
-		System.out.println("Got frist position");
-		GameDataJSON dataFromServer = messageFromServer.removeFirst();
+		System.out.println("Got first position");
+		PositionPacket dataFromServer = (PositionPacket)messageFromServer.removeFirst();
 		
 		// Process what was sent from the server
-		Vector2 playerPos = dataFromServer.getPositions().get(0);
+		Vector2 playerPos = new Vector2();
+		playerPos.fromString(dataFromServer.vector2);
 
 		// TODO put the skin of the player here
 		Texture texture = manager.get("frog orange.png", Texture.class);
@@ -685,13 +703,14 @@ public class Game extends ApplicationAdapter
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+					
 			System.out.println(messageFromServer.size);
 		}
-
-		dataFromServer = messageFromServer.removeFirst();
+		
+		GameDataJSON dataFromServer2 = (GameDataJSON)messageFromServer.removeFirst();
 
 		// Create a new frog for each Vector2 in the JsonValue
-		Array<Vector2> frogPositions = dataFromServer.getPositions();
+		Array<Vector2> frogPositions = dataFromServer2.getPositions();
 		for (Vector2 position : frogPositions) {
 			texture = manager.get("frog classic.png", Texture.class);
 			frog = new Frog(this);
@@ -741,17 +760,17 @@ public class Game extends ApplicationAdapter
 			public void run() {
 				// Always update game variables based on queue of server data
 				while(true) {
-					try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 					
 					GameDataJSON dataFromServer = null;
 					// What kind of data was sent from the server
-					if(messageFromServer.size != 0 && messageFromServer.first().getCommand() == 3) {
-						dataFromServer = messageFromServer.removeFirst();
+					if(messageFromServer.size != 0) {
+						if(messageFromServer.first() instanceof GameDataJSON && ((GameDataJSON)messageFromServer.first()).getCommand() == 3) {
+							dataFromServer = (GameDataJSON)messageFromServer.removeFirst();
+						}
+						else {
+							Thread.yield();
+							continue;
+						}
 					}
 					// TODO What to do when the game is over
 //					else if(dataFromServer.getCommand().equals("gameOver")) {
@@ -838,7 +857,7 @@ public class Game extends ApplicationAdapter
 		return client;
 	}
 	
-	public void addQueue(GameDataJSON data) {
+	public void addQueue(Object data) {
 		//Json json = new Json();
 		//GameDataJSON data = json.fromJson(GameDataJSON.class, message);
 		messageFromServer.addLast(data);

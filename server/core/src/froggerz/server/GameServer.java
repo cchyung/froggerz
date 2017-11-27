@@ -55,10 +55,7 @@ public class GameServer extends ApplicationAdapter {
 //				return vector;
 //			}
 //		});
-	    kryo.register(String.class, 1);
-//	    kryo.register(com.badlogic.gdx.utils.Array.class);
-//	    kryo.register(Object[].class);
-//	    kryo.register(Array[].class);
+		kryo.register(PositionPacket.class, 1);
 	    kryo.register(ButtonsJSON.class, 2);
 	    kryo.register(GameDataJSON.class, new Serializer<GameDataJSON>() {
 	    	{
@@ -66,11 +63,11 @@ public class GameServer extends ApplicationAdapter {
 	    	}
 
 	    	public void write (Kryo kryo, Output output, GameDataJSON data) {
-	    		output.writeInt(data.getCommand(), true);
+	    		output.writeInt(data.getCommand());
 	    		
 	    		// Write vectors
 	    		int length = data.getPositions().size;
-	    		output.writeInt(length, true);
+	    		output.writeInt(length);
 	    		//if (length == 0) return;
 	    		for (int i = 0, n = data.getPositions().size; i < n; i++) {
 	    			output.writeFloat(data.getPositions().get(i).x);
@@ -81,12 +78,12 @@ public class GameServer extends ApplicationAdapter {
 	    	public GameDataJSON read (Kryo kryo, Input input, Class<GameDataJSON> type) {
 	    		System.out.println("Starting to deserialize");
 	    		GameDataJSON data = new GameDataJSON();
-	    		int command = input.readInt(true);
+	    		int command = input.readInt();
 	    		data.setCommand(command);
 	    		
 	    		Array<Vector2> array = new Array<Vector2>();
 	    		kryo.reference(array);
-	    		int length = input.readInt(true);
+	    		int length = input.readInt();
 	    		array.ensureCapacity(length);
 	    		for (int i = 0; i < length; i++) {
 	    			Vector2 vector = new Vector2();
@@ -100,7 +97,7 @@ public class GameServer extends ApplicationAdapter {
 	    	}
 	    }, 3);
 		
-		server.addListener(new GameListener());
+		server.addListener(new GameListener(server));
 		
 	}
 
