@@ -38,10 +38,6 @@ import com.badlogic.gdx.utils.Queue;
 
 import froggerz.game.Actor.State;
 import froggerz.jsonobjects.GameDataJSON;
-import froggerz.websockets.CloseEvent;
-import froggerz.websockets.GameSocket;
-import froggerz.websockets.Websocket;
-import froggerz.websockets.WebsocketListener;
 
 public class Game extends ApplicationAdapter 
 {
@@ -70,7 +66,6 @@ public class Game extends ApplicationAdapter
 	private OrthographicCamera camera;
 	
 	// Server related variables
-	private Websocket gameSocket;
 	private static Queue<GameDataJSON> messageFromServer;
 	
 	Json json;
@@ -96,25 +91,8 @@ public class Game extends ApplicationAdapter
 		json = new Json();
 		
 		messageFromServer = new Queue<GameDataJSON>();
-
-		// Game Socket
-		gameSocket = new Websocket("ws://localhost:8080/froggerz/server");
-		createListeners(gameSocket);
-		gameSocket.open();
-		
-		float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
-		//viewport = new ScreenViewport(camera);
-		//viewport.apply();
-		camera = new OrthographicCamera(WIDTH*aspectRatio, HEIGHT);
-		camera.position.set(WIDTH/2, 0, 0);
 		
 		loadData();
-	}
-
-	@Override
-	public void resize(int width, int height) {
-		//viewport.update(width, height);
-		camera.position.set(WIDTH/2, 0, 0);
 	}
 	
 	/**
@@ -131,10 +109,10 @@ public class Game extends ApplicationAdapter
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		camera.update();
+		//camera.update();
 		
 		batch.begin();
-		batch.setProjectionMatrix(camera.combined);
+		//batch.setProjectionMatrix(camera.combined);
 		
 		// Draw all the sprites
 		for(SpriteComponent spriteComp: mSprites) 
@@ -178,7 +156,7 @@ public class Game extends ApplicationAdapter
 	{
 
 		// Update deltaTime and continue if it meets TARGETFPS
-		//deltaTime += Gdx.graphics.getDeltaTime();
+		deltaTime += Gdx.graphics.getDeltaTime();
 		if(deltaTime < TARGETFPS) 
 		{
 			return;
@@ -703,34 +681,6 @@ public class Game extends ApplicationAdapter
 		Gdx.app.exit();
 	}
 	
-	// TODO Create what the client will listen for for the server
-	/**
-	 * Create the listener(s) the client needs for server communication
-	 * @param gameSocket GameSocket to create the listener(s) for
-	 */
-	private void createListeners(Websocket gameSocket) {
-		// This listener manages the passing of game variables
-		gameSocket.addListener(new WebsocketListener() {
-
-		    @Override
-		    public void onClose(CloseEvent event) {
-			    // do something on close
-		    }
-
-		    @Override
-		    public void onMessage(String msg) {
-		        // a message is received
-		    	Game.addQueue(msg);
-		    	
-		    }
-
-		    @Override
-		    public void onOpen() {
-		        // do something on open
-		    }
-		});
-	}
-	
 	//////////////////////////////// SETTERS/GETTERS ////////////////////////////////
 	
 	/**
@@ -772,20 +722,8 @@ public class Game extends ApplicationAdapter
 	
 	public static void addQueue(String message) {
 		Json json = new Json();
-		debug("In addQueue");
-		debug("Data: " + json.prettyPrint(message));
 		GameDataJSON data = json.fromJson(GameDataJSON.class, message);
-		debug("Loaded in data");
 		messageFromServer.addLast(data);
-		debug("Added data to queue");
 	}
-	
-	public Websocket getGameSocket() {
-		return gameSocket;
-	}
-	
-	private static native void debug(String alert) /*-{
-		alert(alert);
-	}-*/;
 	
 }

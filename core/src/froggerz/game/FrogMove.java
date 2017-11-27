@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.Json;
 
 import froggerz.game.Buttons.PressableButton;
 import froggerz.jsonobjects.ButtonsJSON;
-import froggerz.websockets.Websocket;
 
 /**
  * 
@@ -180,7 +179,7 @@ public class FrogMove extends MoveComponent
 		}
 
 		// Get game socket to send input to server
-		Websocket gameSocket = mOwner.getGame().getGameSocket();
+		//Websocket gameSocket = mOwner.getGame().getGameSocket();
 		ButtonsJSON buttons = new ButtonsJSON();
 		
 		// If no direction are pushed, do not move
@@ -204,7 +203,7 @@ public class FrogMove extends MoveComponent
 			}
 		}
 		
-		gameSocket.send(json.toJson(buttons));
+		//gameSocket.send(json.toJson(buttons));
 	}
 	
 	@Override

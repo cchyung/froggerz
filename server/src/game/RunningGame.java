@@ -22,6 +22,7 @@ public class RunningGame extends Thread {
 	private ConcurrentHashMap<Session, Player> players;
 	private boolean gameOver = false;
 	private Gson gson;
+	private long currentTime = 0L;
 	
 	public RunningGame(int gameNumber, ServerSocket gameServer) {
 		System.out.println("Entering the constructor");
@@ -42,7 +43,9 @@ public class RunningGame extends Thread {
 		data.setCommand("start");
 		broadcast(gson.toJson(data));
 		
+		currentTime = System.currentTimeMillis();
 		while(!gameOver) {
+			
 			updateGame();
 		}
 		
@@ -53,6 +56,13 @@ public class RunningGame extends Thread {
 	}
 	
 	public void updateGame() {
+		if(currentTime + 1000 < System.currentTimeMillis()) {  // Update game only every second
+			return;
+		}
+		else {
+			currentTime = System.currentTimeMillis();
+		}
+		
 		System.out.println("Game " + gameNumber + ": Updating positions of players");
 		// Iterate through all players
 		for (Map.Entry<Session, Player> entry : players.entrySet()) { 
