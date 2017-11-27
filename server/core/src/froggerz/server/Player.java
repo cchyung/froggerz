@@ -1,52 +1,44 @@
-package game;
+package froggerz.server;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.websocket.Session;
+import com.badlogic.gdx.math.Vector2;
+import com.esotericsoftware.kryonet.Connection;
 
-import com.google.gson.Gson;
-
-import game.Buttons.PressableButton;
+import froggerz.jsonobjects.ButtonsJSON;
+import froggerz.jsonobjects.GameDataJSON;
+import froggerz.server.Buttons.PressableButton;
 
 public class Player{
 	private int playerNum;
-	private Session session;
+	private Connection connection;
 	private List<PressableButton> buttonsPressed;
-	private Gson gson;
 	private Vector2 position = Vector2.Zero;
 	
-	public Player(int playerNum, Session session) {
+	public Player(int playerNum, Connection connection) {
 		this.playerNum = playerNum;
 		this.buttonsPressed = new ArrayList<PressableButton>();
 		buttonsPressed = Collections.synchronizedList(buttonsPressed);
-		gson = new Gson();
-		this.session = session;
+		this.connection = connection;
 	}
 	
 	/**
 	 * Sends game data to the player
 	 * @param message data to send
 	 */
-	public void writeMessage(String message) {
-		try {
-			session.getBasicRemote().sendText(message);
-		} catch (IOException ioe) {
-			System.out.println("ioe in Player::writeMessage(): " + ioe.getMessage());
-		}
+	public void writeMessage(GameDataJSON data) {
+		connection.sendTCP(data);
 	}
 	
 	/**
 	 * Processes a JSON string to get which button a player pressed
 	 * @param message JSON string
 	 */
-	public void processMessage(String message) {
-		ButtonsJSON clientData = gson.fromJson(message, ButtonsJSON.class);
-		PressableButton button = clientData.buttonPushed();
-		synchronized(buttonsPressed) {
-			buttonsPressed.add(button);
-		}
+	public void processMessage(ButtonsJSON message) {
+		PressableButton button = message.buttonPushed();
+		buttonsPressed.add(button);
 	}
 	
 	/**
@@ -69,5 +61,9 @@ public class Player{
 	
 	public Vector2 getPosition() {
 		return position;
+	}
+	
+	public int getPlayerNum() {
+		return playerNum;
 	}
 }

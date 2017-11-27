@@ -1,6 +1,6 @@
-package game;
+package froggerz.jsonobjects;
 
-import game.Buttons.PressableButton;
+import froggerz.server.Buttons.PressableButton;
 
 /**
  * Input from a client to update player position on the server

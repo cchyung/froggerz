@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
+import com.esotericsoftware.kryonet.Client;
 
 import froggerz.game.Buttons.PressableButton;
 import froggerz.jsonobjects.ButtonsJSON;
@@ -179,7 +180,7 @@ public class FrogMove extends MoveComponent
 		}
 
 		// Get game socket to send input to server
-		//Websocket gameSocket = mOwner.getGame().getGameSocket();
+		Client gameSocket = mOwner.getGame().getClient();
 		ButtonsJSON buttons = new ButtonsJSON();
 		
 		// If no direction are pushed, do not move
@@ -203,7 +204,7 @@ public class FrogMove extends MoveComponent
 			}
 		}
 		
-		//gameSocket.send(json.toJson(buttons));
+		gameSocket.sendTCP(buttons);
 	}
 	
 	@Override

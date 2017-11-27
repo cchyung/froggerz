@@ -1,7 +1,5 @@
 package froggerz.jsonobjects;
 
-import com.badlogic.gdx.utils.Array;
-
 import froggerz.game.Buttons.PressableButton;
 
 /**

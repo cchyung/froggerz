@@ -1,36 +1,34 @@
-package game;
+package froggerz.server;
 
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.websocket.Session;
+import com.badlogic.gdx.math.Vector2;
+import com.esotericsoftware.kryonet.Connection;
 
-import com.google.gson.Gson;
-
-import game.Buttons.PressableButton;
-import servlet.ServerSocket;
+import froggerz.jsonobjects.ButtonsJSON;
+import froggerz.jsonobjects.GameDataJSON;
+import froggerz.server.Buttons.PressableButton;
 
 /**
  * Contains methods and variables needed for a running game
  */
 public class RunningGame extends Thread {
-	private final int maxPlayers = 4;
+	private final int maxPlayers = 3;
 	private final float DELTATIME = 1.0f/60.0f;
+	private long timePassed = 0L;
 	private final int gameNumber;
-	private ServerSocket gameServer;
-	private ConcurrentHashMap<Session, Player> players;
+	private GameListener gameServer;
+	private ConcurrentHashMap<Connection, Player> players;
 	private boolean gameOver = false;
-	private Gson gson;
 	private long currentTime = 0L;
 	
-	public RunningGame(int gameNumber, ServerSocket gameServer) {
+	public RunningGame(int gameNumber, GameListener gameServer) {
 		System.out.println("Entering the constructor");
 		this.gameServer = gameServer;
 		this.gameNumber = gameNumber;	
-		this.players = new ConcurrentHashMap<Session, Player>(maxPlayers);
-		System.out.println("Before GSON");
-		this.gson = new Gson();
+		this.players = new ConcurrentHashMap<Connection, Player>(maxPlayers);
 		System.out.println("Exiting the constructor");
 	}
 	
@@ -38,12 +36,27 @@ public class RunningGame extends Thread {
 		// Send the frogs start positions
 		updateGame();
 		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// Send signal to start the game
 		GameDataJSON data = new GameDataJSON();
-		data.setCommand("start");
-		broadcast(gson.toJson(data));
+		data.setCommand(1);
+		broadcast(data);
 		
-		currentTime = System.currentTimeMillis();
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//currentTime += Gdx.graphics.getDeltaTime();
+		System.out.println("About to enter gameOveer loop");
 		while(!gameOver) {
 			
 			updateGame();
@@ -56,16 +69,18 @@ public class RunningGame extends Thread {
 	}
 	
 	public void updateGame() {
-		if(currentTime + 1000 < System.currentTimeMillis()) {  // Update game only every second
-			return;
-		}
-		else {
-			currentTime = System.currentTimeMillis();
+		
+		// Wait 1 second
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		System.out.println("Game " + gameNumber + ": Updating positions of players");
 		// Iterate through all players
-		for (Map.Entry<Session, Player> entry : players.entrySet()) { 
+		for (Map.Entry<Connection, Player> entry : players.entrySet()) { 
 			Player player = entry.getValue();
 			Vector2 position = player.getPosition();
 			
@@ -96,21 +111,17 @@ public class RunningGame extends Thread {
 		}
 
 		// Send positions of players to other players
-		for (Map.Entry<Session, Player> sendToPlayer : players.entrySet()) {
+		for (Map.Entry<Connection, Player> sendToPlayer : players.entrySet()) {
 			GameDataJSON data = new GameDataJSON();
-			data.setCommand("frogPositions");
-			ArrayList<Vector2> positions = new ArrayList<Vector2>();
-			
-			for (Map.Entry<Session, Player> playerToSend : players.entrySet()) { 
+			data.setCommand(3);
+			for (Map.Entry<Connection, Player> playerToSend : players.entrySet()) { 
 				// Don't send the position of this player to 
-				if(sendToPlayer.getValue() == playerToSend.getValue()) {
-					continue;
-				}
-				
-				positions.add(playerToSend.getValue().getPosition());
+				if(sendToPlayer.getValue() != playerToSend.getValue()) {
+					data.addPosition(playerToSend.getValue().getPosition());
+				}	
 			}
-			
-			data.setPositions(gson.toJson(positions));
+			System.out.println("Sending update frogs to: " + sendToPlayer.getValue().getPlayerNum());
+			sendToPlayer.getKey().sendTCP(data);
 		}
 	}
 
@@ -119,33 +130,32 @@ public class RunningGame extends Thread {
 	 * @param session The player's session
 	 * @param message Message to pass
 	 */
-	public void passMessage(Session session, String message) {
-		players.get(session).processMessage(message);
+	public void passMessage(Connection connection, ButtonsJSON message) {
+		players.get(connection).processMessage(message);
 	}
 	
 	/**
 	 * 
 	 * @param message Send a message to all players
 	 */
-	public void broadcast(String message) {
-		for (Map.Entry<Session, Player> entry : players.entrySet()) { 
+	public void broadcast(GameDataJSON message) {
+		for (Map.Entry<Connection, Player> entry : players.entrySet()) { 
 			entry.getValue().writeMessage(message);
 		}
 	}
 	
-	public synchronized void addPlayer(Session session) {	
+	public synchronized void addPlayer(Connection connection) {	
 		System.out.println("Adding player to game");
-		Player newPlayer = new Player(players.size(), session);
+		Player newPlayer = new Player(players.size(), connection);
 		newPlayer.setPosition((players.size()+1) * 160.0f, 32.0f);
-		players.put(session, newPlayer);
+		players.put(connection, newPlayer);
 		System.out.println("Added player");
 		// Send position to the player
 		GameDataJSON data = new GameDataJSON();
-		data.setCommand("startPosition");
-		data.setData(gson.toJson(newPlayer.getPosition()));
-		System.out.println(gson.toJson(data));
-		newPlayer.writeMessage(gson.toJson(data));
-		System.out.println("Sending players starting position");
+		data.setCommand(2);
+		data.addPosition(newPlayer.getPosition());
+		System.out.println("Sending starting position to player: " + newPlayer.getPlayerNum());
+		newPlayer.writeMessage(data);
 		if(gameFull()) {
 			System.out.println("Last player added, starting game");
 			this.start();  // Start the game

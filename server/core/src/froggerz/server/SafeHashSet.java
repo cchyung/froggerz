@@ -1,4 +1,4 @@
-package game;
+package froggerz.server;
 import java.util.HashSet;
 
 /**

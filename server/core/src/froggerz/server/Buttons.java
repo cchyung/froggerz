@@ -1,4 +1,4 @@
-package game;
+package froggerz.server;
 
 public class Buttons {
 	public enum PressableButton {
