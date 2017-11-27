@@ -19,7 +19,7 @@
 			<div class="col-xs-3">Wins:</div>
 			<div class="col-xs-3">${user.getmWins()}</div>
 		</div>
-		<div id="chooseSkin" class="row">
+		<!-- <div id="chooseSkin" class="row">
 			<div class="col-xs-3">Skins:</div>
 			<c:choose>
 				<c:when test="${user.getmWins()<3}">
@@ -72,18 +72,48 @@
 				</c:otherwise>
 			</c:choose>
 		</div>
-		<div id="buttons" class="row">
-			<button class="saveAndQuit" onclick="formSwitch()">Quit</button>
-			<button class="saveAndPlay" onclick="formSwitch()">Join Game</button>
+		 -->
+		<div class="buttons" class="row">
+			<div class="col-xs-3">
+				<button class="saveAndQuit" onclick="changePage(1)">Quit</button>
+			</div>
+
+			<div class="col-xs-3">
+				<button class="joinGame" onclick="changePage(2)">Join Game</button>
+			</div>
+
+			<div class="col-xs-3">
+				<button class="leaderboard" onclick="changePage(3)">Check
+					Leaderboard</button>
+			</div>
+		</div>
+		<div class="buttons" class="row">
+			<div class="col-xs-3">
+				<button class="saveAndQuit" onclick="changePage(1)">Quit</button>
+			</div>
+
+			<div class="col-xs-3">
+				<button class="joinGame" onclick="changePage(2)">Join Game</button>
+			</div>
+
+			<div class="col-xs-3">
+				<button class="leaderboard" onclick="changePage(3)">Check
+					Leaderboard</button>
+			</div>
 		</div>
 	</div>
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script>
-		$(".unlocked").click(function() {
-			$(".selected").attr('class', 'unlocked');
-			$(this).attr('class', 'selected');
-		});
+		function changePage(x) {
+			if (x === 1) {
+				document.location.href = "./index.jsp?message=";
+			} else if (x === 2) {
+				document.location.href = "./game.jsp";
+			} else{
+				document.location.href = "./leaderboard.jsp";
+			}
+		}
 	</script>
 </body>
 </html>

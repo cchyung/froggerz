@@ -36,8 +36,6 @@ public class RegisterUser extends HttpServlet {
 			while (rs.next()) {
 				empty = false;
 			}
-			request.setAttribute("username", inputtedName);
-			request.setAttribute("loginSuccess", !empty);
 		} catch (SQLException sqle) {
 			System.out.println(sqle.getMessage());
 		} catch (ClassNotFoundException cnfe) {
@@ -59,6 +57,7 @@ public class RegisterUser extends HttpServlet {
 		}
 
 		if (empty) {
+			request.setAttribute("user", UserManager.signup(inputtedName, inputtedPassword));
 			request.getRequestDispatcher("/userInfo.jsp").forward(request, response);
 		}
 		else {
