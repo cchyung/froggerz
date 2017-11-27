@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+// Class for handling database - user interactions
 public class UserManager
 {
 	// List of users in the current game
