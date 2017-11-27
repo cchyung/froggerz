@@ -123,11 +123,11 @@ public class Game extends ApplicationAdapter
 //			}
 //		});
 //		
-	    kryo.register(String.class);
+	    kryo.register(String.class, 1);
 //	    kryo.register(com.badlogic.gdx.utils.Array.class);
 //	    kryo.register(Object[].class);
 //	    kryo.register(Array[].class);
-	    kryo.register(ButtonsJSON.class);
+	    kryo.register(ButtonsJSON.class, 2);
 	    kryo.register(GameDataJSON.class, new Serializer<GameDataJSON>() {
 	    	{
 	    		setAcceptsNull(true);
@@ -144,11 +144,10 @@ public class Game extends ApplicationAdapter
 	    			output.writeFloat(data.getPositions().get(i).x);
 					output.writeFloat(data.getPositions().get(i).y);
 	    		}
-	    		
-	    		output.writeInt(data.getData(), true);
 	    	}
 
 	    	public GameDataJSON read (Kryo kryo, Input input, Class<GameDataJSON> type) {
+	    		System.out.println("Starting to deserialize");
 	    		GameDataJSON data = new GameDataJSON();
 	    		int command = input.readInt(true);
 	    		data.setCommand(command);
@@ -164,13 +163,10 @@ public class Game extends ApplicationAdapter
 	    			array.add(vector);
 	    		}
 	    		
-	    		int dataCommand = input.readInt(true);
-	    		data.setData(dataCommand);
-	    		
 	    		data.setPositions(array);
 	    		return data;
 	    	}
-	    });
+	    }, 3);
 		
 	    // Listener for the server
 		client.addListener(new Listener() {

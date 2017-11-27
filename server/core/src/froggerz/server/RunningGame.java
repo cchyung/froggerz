@@ -155,6 +155,8 @@ public class RunningGame extends Thread {
 		data.setCommand(2);
 		data.addPosition(newPlayer.getPosition());
 		System.out.println("Sending starting position to player: " + newPlayer.getPlayerNum());
+		System.out.println("Command " + data.getCommand());
+		System.out.println(data.getPositions().get(0));
 		newPlayer.writeMessage(data);
 		if(gameFull()) {
 			System.out.println("Last player added, starting game");

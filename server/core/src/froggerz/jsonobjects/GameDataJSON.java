@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.Array;
 public class GameDataJSON {
 	public int command = -1;  // Any specific command from the server
 	public Array<Vector2> positions = new Array<Vector2>();  // Positions of players that is not this player
-	public int data = -1;
 	
 	public GameDataJSON(){
 	}
@@ -28,19 +27,11 @@ public class GameDataJSON {
 		this.positions = positions;
 	}
 	
-	public void setData(int data) {
-		this.data = data;
-	}
-	
 	public int getCommand() {
 		return command;
 	}
 	
 	public Array<Vector2> getPositions() {
 		return positions;
-	}
-	
-	public int getData() {
-		return data;
 	}
 }
