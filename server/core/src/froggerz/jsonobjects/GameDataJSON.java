@@ -7,9 +7,12 @@ import com.badlogic.gdx.utils.Array;
  * Data to be sent from the server to the client
  */
 public class GameDataJSON {
-	private int command = -1;  // Any specific command from the server
-	private Array<Vector2> positions = new Array<Vector2>();  // Positions of players that is not this player
-	private int data = -1;
+	public int command = -1;  // Any specific command from the server
+	public Array<Vector2> positions = new Array<Vector2>();  // Positions of players that is not this player
+	public int data = -1;
+	
+	public GameDataJSON(){
+	}
 	
 	/////////////////////////////////////// Setters/Getters ///////////////////////////////////////
 	

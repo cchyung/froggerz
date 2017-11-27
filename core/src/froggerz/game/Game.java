@@ -74,7 +74,7 @@ public class Game extends ApplicationAdapter
 	
 	// Server related variables
 	private Client client;
-	private static Queue<GameDataJSON> messageFromServer;
+	private Queue<GameDataJSON> messageFromServer;
 	
 	public enum TileType 
 	{
@@ -175,8 +175,11 @@ public class Game extends ApplicationAdapter
 	    // Listener for the server
 		client.addListener(new Listener() {
 		       public void received (Connection connection, Object object) {
+		    	   System.out.println("Received message from server");
 		          if (object instanceof GameDataJSON) {
+		        	  System.out.println("Object is GameData");
 		        	  GameDataJSON response = (GameDataJSON)object;
+		        	  System.out.println("Casted to GameData");
 		        	  addQueue(response);
 		             System.out.println("Received: " + response.getCommand());
 		          }
@@ -680,6 +683,13 @@ public class Game extends ApplicationAdapter
 		System.out.println("Waiting for other frogs positions");
 		// Wait to receive the positions of other frogs
 		while(messageFromServer.size == 0){
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println(messageFromServer.size);
 		}
 
 		dataFromServer = messageFromServer.removeFirst();
@@ -704,6 +714,12 @@ public class Game extends ApplicationAdapter
 		System.out.println("Waiting for the game to start");
 		// Wait for the command to start the game
 		while(messageFromServer.size == 0){
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			System.out.println(messageFromServer.size);
 		}
 		messageFromServer.removeFirst();
@@ -738,15 +754,13 @@ public class Game extends ApplicationAdapter
 					
 					GameDataJSON dataFromServer = null;
 					// What kind of data was sent from the server
-					synchronized(messageFromServer) {
-						if(messageFromServer.size != 0 && messageFromServer.first().getCommand() == 3) {
-							dataFromServer = messageFromServer.removeFirst();
-						}
-						// TODO What to do when the game is over
-//						else if(dataFromServer.getCommand().equals("gameOver")) {
-//				
-//						}
+					if(messageFromServer.size != 0 && messageFromServer.first().getCommand() == 3) {
+						dataFromServer = messageFromServer.removeFirst();
 					}
+					// TODO What to do when the game is over
+//					else if(dataFromServer.getCommand().equals("gameOver")) {
+//			
+//					}
 					
 					// Positions for frogs
 					Array<Vector2> frogPositions;
@@ -755,9 +769,7 @@ public class Game extends ApplicationAdapter
 						int currentFrog = 0;
 						for (Vector2 position : frogPositions) {
 							// Make sure the game isn't trying to draw the this frog
-							synchronized(mPlayers.get(currentFrog)) {
-								mPlayers.get(currentFrog).setPosition(position);
-							}
+							mPlayers.get(currentFrog).setPosition(position);
 							++currentFrog;
 						}
 					}
@@ -830,12 +842,10 @@ public class Game extends ApplicationAdapter
 		return client;
 	}
 	
-	public static void addQueue(GameDataJSON data) {
+	public void addQueue(GameDataJSON data) {
 		//Json json = new Json();
 		//GameDataJSON data = json.fromJson(GameDataJSON.class, message);
-		synchronized(messageFromServer) {
-			messageFromServer.addLast(data);
-		}
+		messageFromServer.addLast(data);
 	}
 	
 }

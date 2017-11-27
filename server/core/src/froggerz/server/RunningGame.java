@@ -15,7 +15,7 @@ import froggerz.server.Buttons.PressableButton;
  * Contains methods and variables needed for a running game
  */
 public class RunningGame extends Thread {
-	private final int maxPlayers = 3;
+	private final int maxPlayers = 2;
 	private final float DELTATIME = 1.0f/60.0f;
 	private long timePassed = 0L;
 	private final int gameNumber;
@@ -25,11 +25,11 @@ public class RunningGame extends Thread {
 	private long currentTime = 0L;
 	
 	public RunningGame(int gameNumber, GameListener gameServer) {
-		System.out.println("Entering the constructor");
+		//System.out.println("Entering the constructor");
 		this.gameServer = gameServer;
 		this.gameNumber = gameNumber;	
 		this.players = new ConcurrentHashMap<Connection, Player>(maxPlayers);
-		System.out.println("Exiting the constructor");
+		//System.out.println("Exiting the constructor");
 	}
 	
 	public void run() {
@@ -56,7 +56,7 @@ public class RunningGame extends Thread {
 		}
 		
 		//currentTime += Gdx.graphics.getDeltaTime();
-		System.out.println("About to enter gameOveer loop");
+		System.out.println("About to enter gameOver loop");
 		while(!gameOver) {
 			
 			updateGame();
@@ -144,12 +144,12 @@ public class RunningGame extends Thread {
 		}
 	}
 	
-	public synchronized void addPlayer(Connection connection) {	
-		System.out.println("Adding player to game");
+	public void addPlayer(Connection connection) {	
+		//System.out.println("Adding player to game");
 		Player newPlayer = new Player(players.size(), connection);
 		newPlayer.setPosition((players.size()+1) * 160.0f, 32.0f);
 		players.put(connection, newPlayer);
-		System.out.println("Added player");
+		//System.out.println("Added player");
 		// Send position to the player
 		GameDataJSON data = new GameDataJSON();
 		data.setCommand(2);

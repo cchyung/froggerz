@@ -8,11 +8,14 @@ import froggerz.server.Buttons.PressableButton;
 public class ButtonsJSON {
 	
 	// Buttons
-	private boolean left = false;
-	private boolean right = false;
-	private boolean up = false;
-	private boolean down = false;
-	private final static transient int numOfButtons = 4;
+	public boolean left = false;
+	public boolean right = false;
+	public boolean up = false;
+	public boolean down = false;
+	public final static transient int numOfButtons = 4;
+	
+	public ButtonsJSON() {
+	}
 
 	public void leftPushed() {
 		left = true;

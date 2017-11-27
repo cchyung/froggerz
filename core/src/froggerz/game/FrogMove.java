@@ -204,7 +204,7 @@ public class FrogMove extends MoveComponent
 			}
 		}
 		
-		gameSocket.sendTCP(buttons);
+		//gameSocket.sendTCP(buttons);
 	}
 	
 	@Override

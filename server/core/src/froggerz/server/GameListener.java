@@ -20,18 +20,18 @@ public class GameListener extends Listener {
 	public void connected(Connection connection) {
 		System.out.println("Player has connected!");
 		if(currentOpenGame == null) {  // First game ever
-			System.out.println("Creating game and adding player to it");
+			//System.out.println("Creating game and adding player to it");
 			createGame(connection);
 			currentOpenGame = runningGames.get(gameNumber-1);
 			connectedPlayers.put(connection, currentOpenGame);
 		}
 		else if (!currentOpenGame.gameFull()){  // Game isn't full
-			System.out.println("Adding player to not full game");
+			//System.out.println("Adding player to not full game");
 			connectedPlayers.put(connection, currentOpenGame);
 			currentOpenGame.addPlayer(connection);
 		}
 		else {  // Game is full, create a new game
-			System.out.println("Game was full, adding player to new game");
+			//System.out.println("Game was full, adding player to new game");
 			createGame(connection);
 			currentOpenGame = runningGames.get(gameNumber-1);
 		}
@@ -64,9 +64,9 @@ public class GameListener extends Listener {
 	 * @return Instance of RunningGame created
 	 */
 	public RunningGame createGame(Connection connection) {
-		System.out.println("In creating game");
+		//System.out.println("In creating game");
 		RunningGame newGame = new RunningGame(gameNumber, this);
-		System.out.println("Put into map");
+		//System.out.println("Put into map");
 		runningGames.put(gameNumber, newGame);
 		newGame.addPlayer(connection);
 		System.out.println("Game number " + gameNumber + " created!");

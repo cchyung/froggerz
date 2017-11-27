@@ -29,6 +29,7 @@ public class Player{
 	 * @param message data to send
 	 */
 	public void writeMessage(GameDataJSON data) {
+		System.out.println("Sending player: " + playerNum + " data");
 		connection.sendTCP(data);
 	}
 	
