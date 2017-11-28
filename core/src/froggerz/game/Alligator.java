@@ -2,9 +2,9 @@ package froggerz.game;
 
 public class Alligator extends Actor
 {
-	public Alligator(Game game) 
+	public Alligator(FroggerzGame froggerzGame) 
 	{
-		super(game);
+		super(froggerzGame);
 		
 		mMoveComp = new MoveComponent(this);
 		

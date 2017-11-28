@@ -2,8 +2,8 @@ package froggerz.game;
 
 public class Vehicle extends Actor{
 	
-	public Vehicle(Game game) {
-		super(game);
+	public Vehicle(FroggerzGame froggerzGame) {
+		super(froggerzGame);
 		
 		mMoveComp = new MoveComponent(this);
 		

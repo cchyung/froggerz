@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Actor 
 {
-	private Game mGame = null;
+	private FroggerzGame mGame = null;
 	private State mState = State.EActive;
 	private Vector2 mPosition = Vector2.Zero;
 	private float mRotation = 0.0f;
@@ -25,11 +25,11 @@ public class Actor
 	
 	/**
 	 * Constructor
-	 * @param game
+	 * @param froggerzGame
 	 */
-	public Actor(Game game) 
+	public Actor(FroggerzGame froggerzGame) 
 	{
-		mGame = game;
+		mGame = froggerzGame;
 		mGame.addActor(this);
 	}
 	
@@ -136,7 +136,7 @@ public class Actor
 	public CollisionComponent getCollision() { return mCollComp; }
 	public State getState() { return mState; }
 	public void setState(State state) { mState = state; }
-	public Game getGame() { return mGame; }
+	public FroggerzGame getGame() { return mGame; }
 	public final float getScale() { return mScale; }
 	public void setScale(float scale) { mScale = scale; }
 	private Vector2 mStartPos;

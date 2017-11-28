@@ -2,8 +2,8 @@ package froggerz.game;
 
 public class Log extends Actor {
 	
-	public Log(Game game) {
-		super(game);
+	public Log(FroggerzGame froggerzGame) {
+		super(froggerzGame);
 		
 		mMoveComp = new MoveComponent(this);
 		

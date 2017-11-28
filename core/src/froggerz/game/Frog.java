@@ -4,10 +4,10 @@ public class Frog extends Actor{
 	
 	/**
 	 * Constructor
-	 * @param game
+	 * @param froggerzGame
 	 */
-	public Frog(Game game) {
-		super(game);
+	public Frog(FroggerzGame froggerzGame) {
+		super(froggerzGame);
 		
 		mMoveComp = new FrogMove(this);
 		mCollComp = new FrogCollide(this);
