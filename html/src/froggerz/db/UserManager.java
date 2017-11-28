@@ -102,24 +102,15 @@ public class UserManager
 			conn = DriverManager.getConnection(
 					"jdbc:mysql://localhost/Froggerz?user=root&password=root&useSSL=false");
 			st = conn.createStatement();
-			rs = st.executeQuery("SELECT * from Rankings;");
+			rs = st.executeQuery("SELECT * from Users ORDER BY wins DESC");
 
 			int count = 1;
 			while (rs.next())
 			{
-				Statement st2 = conn.createStatement();
-
-				int id = rs.getInt("user_id");
-
-				ResultSet rs2 = st2.executeQuery(
-						"SELECT * from Users where id=" + id + ";");
-
-				rs2.next();
-
 				String[] temp = new String[3];
 				temp[0] = "" + count++;
-				temp[1] = rs2.getString("username");
-				temp[2] = "" + rs2.getInt("wins");
+				temp[1] = rs.getString("username");
+				temp[2] = "" + rs.getInt("wins");
 				out.add(temp);
 			}
 
