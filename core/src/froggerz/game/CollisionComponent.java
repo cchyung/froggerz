@@ -53,17 +53,12 @@ public class CollisionComponent extends Component {
 	public final Vector2 getMin()
 	{
 		Vector2 min = mOwner.getPosition();
-		min.x = (mWidth * mOwner.getScale()) / 2.0f;
-		min.y = (mHeight * mOwner.getScale()) / 2.0f;
-
 		return min;
 	}
 
 	public final Vector2 getMax()
 	{
-		Vector2 max = mOwner.getPosition();
-		max.x = (mWidth * mOwner.getScale()) / 2.0f;
-		max.y = (mHeight * mOwner.getScale()) / 2.0f;
+		Vector2 max = new Vector2(mOwner.getPosition().x + mWidth, mOwner.getPosition().y + mHeight);
 		return max;
 	}
 

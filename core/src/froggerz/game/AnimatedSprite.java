@@ -30,13 +30,15 @@ public class AnimatedSprite extends SpriteComponent
 	    }
 	    
 	    //Cast mAnimTimer to an integer to get the current frame of the animation
-	    int currentFrame = (int) mAnimTimer;
+	    mCurrentFrame = (int) mAnimTimer;
 	    	    
-	    setTexture(mImages.get(currentFrame));
+	    setTexture(mImages.get(mCurrentFrame));
+	    
 	}
 	
 	public void setSpeed(float speed)
 	{
 		mAnimSpeed = speed;
 	}
+	
 }

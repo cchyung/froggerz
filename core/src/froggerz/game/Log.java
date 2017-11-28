@@ -8,5 +8,8 @@ public class Log extends Actor {
 		mMoveComp = new MoveComponent(this);
 		
 		mMoveComp.setForwardSpeed(20.0f);
+		
+		mCollComp = new CollisionComponent(this);
+		mCollComp.SetSize(80, 19);
 	}
 }

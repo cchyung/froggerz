@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Json;
 
 import froggerz.game.Buttons.PressableButton;
-import froggerz.jsonobjects.ButtonsJSON;
-import froggerz.websockets.Websocket;
+//import froggerz.jsonobjects.ButtonsJSON;
+//import froggerz.websockets.GameSocket;
 
 /**
  * 
@@ -180,8 +180,8 @@ public class FrogMove extends MoveComponent
 		}
 
 		// Get game socket to send input to server
-		Websocket gameSocket = mOwner.getGame().getGameSocket();
-		ButtonsJSON buttons = new ButtonsJSON();
+		//GameSocket gameSocket = mOwner.getGame().getGameSocket();
+		//ButtonsJSON buttons = new ButtonsJSON();
 		
 		// If no direction are pushed, do not move
 		if (!Gdx.input.isKeyPressed(Input.Keys.UP) && !Gdx.input.isKeyPressed(Input.Keys.DOWN)
@@ -189,22 +189,24 @@ public class FrogMove extends MoveComponent
 		{
 			buttonPushed = null;
 		}
-		else {  // Button pressed, send to server
-			if(leftPushed) {
-				buttons.leftPushed();
-			}
-			else if(rightPushed) {
-				buttons.rightPushed();
-			}
-			else if(upPushed) {
-				buttons.upPushed();
-			}
-			else if(downPushed) {
-				buttons.downPushed();
-			}
-		}
 		
-		gameSocket.send(json.toJson(buttons));
+		buttonPushedLast = buttonPushed;
+//		else {  // Button pressed, send to server
+//			if(leftPushed) {
+//				buttons.leftPushed();
+//			}
+//			else if(rightPushed) {
+//				buttons.rightPushed();
+//			}
+//			else if(upPushed) {
+//				buttons.upPushed();
+//			}
+//			else if(downPushed) {
+//				buttons.downPushed();
+//			}
+//		}
+		
+		//gameSocket.send(json.toJson(buttons));
 	}
 	
 	@Override
@@ -220,14 +222,18 @@ public class FrogMove extends MoveComponent
 		}
 		if(buttonToUpdate == PressableButton.LEFT) {
 			changeX = -32.0f;
+			changeY = 0.0f;
 		}
 		else if(buttonToUpdate == PressableButton.RIGHT) {
 			changeX = 32.0f;
+			changeY = 0.0f;
 		}
 		else if(buttonToUpdate == PressableButton.UP) {
+			changeX = 0.0f;
 			changeY = 32.0f;
 		}
 		else if(buttonToUpdate  == PressableButton.DOWN) {
+			changeX = 0.0f;
 			changeY = -32.0f;
 		}
 		

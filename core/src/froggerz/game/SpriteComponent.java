@@ -89,5 +89,8 @@ public class SpriteComponent extends Component
 	{
 		mSprite.setPosition(mOwner.getPosition().x, mOwner.getPosition().y);
 	}
+	
+	protected int mCurrentFrame = -1;
+	public int getCurrentFrame() { return mCurrentFrame; }
 
 }

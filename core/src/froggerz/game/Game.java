@@ -5,11 +5,10 @@
 
 package froggerz.game;
 
+// TODO Test if the gwt.xml file needs to import the froggerz.websockets package
 // TODO Test if the WebSocket wrapper works
+// TODO Create a class that contians variables to transport game data via JSON over WebSockets
 // TODO Fix the positioning of the camera and implement scrolling
-// TODO Add Collision detection
-// TODO Delete actors when they go off screen
-// TODO Add bounds for the frogs
 
 /**
  * IDEA
@@ -31,17 +30,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.Queue;
 
 import froggerz.game.Actor.State;
-import froggerz.jsonobjects.GameDataJSON;
-import froggerz.websockets.CloseEvent;
-import froggerz.websockets.GameSocket;
-import froggerz.websockets.Websocket;
-import froggerz.websockets.WebsocketListener;
+//import froggerz.websockets.CloseEvent;
+//import froggerz.websockets.GameSocket;
+//import froggerz.websockets.GameSocketListener;
 
 public class Game extends ApplicationAdapter 
 {
@@ -58,7 +51,6 @@ public class Game extends ApplicationAdapter
 	
 	// Holds all actors in the game
 	private Array<Actor> mActors;
-	private Array<Actor> mPlayers;  // Players in the game exluding this player
 	private Array<SpriteComponent> mSprites;
 	
 	private SpriteBatch batch;
@@ -70,10 +62,7 @@ public class Game extends ApplicationAdapter
 	private OrthographicCamera camera;
 	
 	// Server related variables
-	private Websocket gameSocket;
-	private static Queue<GameDataJSON> messageFromServer;
-	
-	Json json;
+	//GameSocket gameSocket;
 	
 	public enum TileType 
 	{
@@ -92,15 +81,12 @@ public class Game extends ApplicationAdapter
 		
 		batch = new SpriteBatch();
 		manager = new AssetManager();
-		
-		json = new Json();
-		
-		messageFromServer = new Queue<GameDataJSON>();
 
-		// Game Socket
-		gameSocket = new Websocket("ws://localhost:8080/froggerz/server");
+		// TODO 
+		/*
+		gameSocket = new GameSocket("ws://localhost:8080/froggerz/server");
 		createListeners(gameSocket);
-		gameSocket.open();
+		*/
 		
 		float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
 		//viewport = new ScreenViewport(camera);
@@ -176,50 +162,25 @@ public class Game extends ApplicationAdapter
 	 */
 	private void updateGame() 
 	{
-
+		
 		// Update deltaTime and continue if it meets TARGETFPS
-		//deltaTime += Gdx.graphics.getDeltaTime();
+		deltaTime += Gdx.graphics.getDeltaTime();
 		if(deltaTime < TARGETFPS) 
 		{
 			return;
 		}
-		else if (deltaTime > TARGETFPS) 
+		else if(deltaTime > .05f) 
 		{  // Limit deltaTime
-			deltaTime = TARGETFPS;
+			deltaTime = 0.05f;
 		}
-
+		
 		// Update actors
 		Array<Actor> copyActors = mActors;
 		for (Actor actor : copyActors)
 		{
 			actor.update(deltaTime);
 		}
-		
-		GameDataJSON dataFromServer = null;
-		if(messageFromServer.size != 0) {
-			dataFromServer = messageFromServer.removeFirst();
-		}
-		
-		if(dataFromServer != null && dataFromServer.getCommand().equals("frogPositions")) {
 
-			// Create a new frog for each Vector2 in the JsonValue
-			JsonValue frogPositions = new JsonReader().parse(dataFromServer.getPositions());
-			int currentFrog = 0;
-			for (JsonValue entry = frogPositions.child; entry != null; entry = entry.next.next) {
-
-				// Extract Vector2 data from JsonValue, does not matter which frog the position is assigned to because all have skin "frog classic.png"
-				Vector2 vector2 = new Vector2();
-				vector2.x = entry.asFloat();
-				vector2.y = entry.next.asFloat();
-				mPlayers.get(currentFrog).setPosition(vector2);
-				++currentFrog;
-			}
-		}
-		// TODO What to do when the game is over
-//		else if(dataFromServer.getCommand().equals("gameOver")) {
-//
-//		}
-		
 		// Get dead actors
 		Array<Actor> deadActors = new Array<Actor>();
 		for (Actor actor : mActors)
@@ -235,11 +196,11 @@ public class Game extends ApplicationAdapter
 		{
 			actor.destroy();
 		}
-
+		
 		deltaTime = 0.0f;
 	}
-
-
+	
+	
 	/**
 	 * Loads data relevant to the game
 	 */
@@ -249,27 +210,27 @@ public class Game extends ApplicationAdapter
 		Lane lane1 = new Lane();
 		lane1.setDirection(-1.0f);
 		lane1.setSpeed(40.0f);
-
+		
 		Lane lane2 = new Lane();
-		lane2.setDirection(1.0f);
+		lane2.setDirection(-1.0f);
 		lane2.setSpeed(70.0f);
-
+		
 		Lane lane3 = new Lane();
-		lane3.setDirection(1.0f);
+		lane3.setDirection(-1.0f);
 		lane3.setSpeed(55.0f);
-
+		
 		Lane lane4 = new Lane();
 		lane4.setDirection(-1.0f);
 		lane4.setSpeed(100.0f);
-
+		
 		River river1 = new River();
 		river1.setDirection(-1.0f);
 		river1.setSpeed(20.0f);
-
+		
 		River river2 = new River();
-		river2.setDirection(1.0f);
-		river2.setSpeed(25.0f);
-
+		river2.setDirection(-1.0f);
+		river2.setSpeed(35.0f);
+		
 		//Load all of the assets
 		manager.load(Gdx.files.internal("blue car.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("finish.png").path(), Texture.class);
@@ -291,11 +252,20 @@ public class Game extends ApplicationAdapter
 		manager.load(Gdx.files.internal("road.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("water.png").path(), Texture.class);
 		manager.load(Gdx.files.internal("roadtop.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator0 copy.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator1 copy.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator2 copy.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator3 copy.png").path(), Texture.class);
+		manager.load(Gdx.files.internal("gator4 copy.png").path(), Texture.class);
+
+
 		// TODO Get the players skins from server
 		// Texture playerSkin = manager.load(Gdx.files.internal("playerskin.png").path(), Texture.class);
-
+		
 		manager.finishLoading();  // Block until all assets are loaded
-
+		
+		
+		
 		// Load level from file
 		FileHandle file = Gdx.files.internal("Level.txt");
 
@@ -304,10 +274,10 @@ public class Game extends ApplicationAdapter
 
 		//Parse the file into individual chars
 		TileType tileType = null;
-
+		
 		//Keep track of how many logs have been made
 		int logCount = 0;
-
+		
 		for(int j=0; j<levelRows.length; ++j) {
 			String levelRow = levelRows[j];
 			for(int k=0; k<levelRow.length(); ++k) {
@@ -338,18 +308,58 @@ public class Game extends ApplicationAdapter
 				//Load in the actors (vehicles, logs, alligators, frogs)
 				else if (levelChar == '1')
 				{
+					Texture texture = manager.get("frog classic.png", Texture.class);
+					Actor frog = new Frog(this);
+
+					SpriteComponent sc = new SpriteComponent(frog, 150);
+					sc.setTexture(texture);
+					sc.setSize(30, 23);
+					frog.setSprite(sc);
+
+					FrogMove move = new FrogMove(frog);
+					frog.setMove(move);
+
+					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
+					frog.setStartPos(new Vector2(k * 32, j * 32 + 5));
 					tileType = TileType.GRASS;
 				}
 				else if (levelChar == '2')
 				{
+					Texture texture = manager.get("frog orange.png", Texture.class);
+					Actor frog = new Frog(this);
+
+					SpriteComponent sc = new SpriteComponent(frog, 150);
+					sc.setTexture(texture);
+					sc.setSize(30, 23);
+					frog.setSprite(sc);
+
+					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
 					tileType = TileType.GRASS;
 				}
 				else if (levelChar == '3')
 				{
+					Texture texture = manager.get("frog black.png", Texture.class);
+					Actor frog = new Frog(this);
+
+					SpriteComponent sc = new SpriteComponent(frog, 150);
+					sc.setTexture(texture);
+					sc.setSize(30, 23);
+					frog.setSprite(sc);
+
+					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
 					tileType = TileType.GRASS;
 				}
 				else if (levelChar == '4')
 				{
+					Texture texture = manager.get("frog red.png", Texture.class);
+					Actor frog = new Frog(this);
+
+					SpriteComponent sc = new SpriteComponent(frog, 150);
+					sc.setTexture(texture);
+					sc.setSize(30, 23);
+					frog.setSprite(sc);
+
+					frog.setPosition(new Vector2(k * 32, j * 32 + 5));
 					tileType = TileType.GRASS;
 				}
 				else if (levelChar == 'V')
@@ -459,6 +469,9 @@ public class Game extends ApplicationAdapter
 					SpriteComponent sc = new SpriteComponent(log, 100);
 					sc.setTexture(texture);
 
+					sc.setSize(80, 19);
+
+					/*
 					//Evenly distribute the log sizes
 					if (logCount % 3 == 0)
 					{
@@ -474,6 +487,7 @@ public class Game extends ApplicationAdapter
 					{
 						sc.setSize(120, 19);
 					}
+					*/
 
 					log.setSprite(sc);
 
@@ -494,11 +508,11 @@ public class Game extends ApplicationAdapter
 				}
 				else if (levelChar == 'A')
 				{
-					Texture texture = manager.get("gator_0.png", Texture.class);
-					Texture texture1 = manager.get("gator_1.png", Texture.class);
-					Texture texture2 = manager.get("gator_2.png", Texture.class);
-					Texture texture3 = manager.get("gator_3.png", Texture.class);
-					Texture texture4 = manager.get("gator_4.png", Texture.class);
+					Texture texture = manager.get("gator0 copy.png", Texture.class);
+					Texture texture1 = manager.get("gator1 copy.png", Texture.class);
+					Texture texture2 = manager.get("gator2 copy.png", Texture.class);
+					Texture texture3 = manager.get("gator3 copy.png", Texture.class);
+					Texture texture4 = manager.get("gator4 copy.png", Texture.class);
 					Actor gator = new Alligator(this);
 
 					AnimatedSprite sc = new AnimatedSprite(gator, 100);
@@ -606,83 +620,9 @@ public class Game extends ApplicationAdapter
 					break;
 				}	
 			}
-		}  // End level loading from file
-
-//		// Wait to receive this players position from the server
-//		debug("Before first while loop");  // DEBUG
-//		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("startPosition")){
-//			// Message does not have the players initial position, discard it
-//			debug("before if statement");  // DEBUG
-//			if(messageFromServer.size != 0) {
-//				messageFromServer.removeFirst();
-//				debug("At end of the if");  // DEBUG
-//			}
-//		}
-//		debug("After the end of the first while loop");  // DEBUG
-//
-//		GameDataJSON dataFromServer = messageFromServer.removeFirst();
-//		
-//		debug("After getting the first data thingy");  // DEBUG
-//		// Process what was sent from the server
-//		Vector2 playerPos = json.fromJson(Vector2.class, dataFromServer.getData());
-//
-//		// TODO put the skin of the player here
-//		Texture texture = manager.get("frog orange.png", Texture.class);
-//		Actor frog = new Frog(this);
-//
-//		SpriteComponent sc = new SpriteComponent(frog, 150);
-//		sc.setTexture(texture);
-//		sc.setSize(30, 23);
-//		frog.setSprite(sc);
-//		frog.setPosition(playerPos);
-//
-//		debug("WAITING for POSITIONS of OTHER frogs");  // DEBUG
-//		// Wait to receive the positions of other frogs
-//		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("frogPositions")){
-//			// Message does not have the other frogs positions, discard it
-//			if(messageFromServer.size != 0) {
-//				messageFromServer.removeFirst();
-//			}
-//		}
-//		debug("Got positions of other frogs");  // DEBUG
-//
-//		dataFromServer = messageFromServer.removeFirst();
-//
-//		debug("PROCESSING POSITON OF OTHER FROGS");  // DEBUG
-//		// Create a new frog for each Vector2 in the JsonValue
-//		JsonValue frogPositions = new JsonReader().parse(dataFromServer.getPositions());
-//		for (JsonValue entry = frogPositions.child; entry != null; entry = entry.next.next) {
-//			texture = manager.get("frog classic.png", Texture.class);
-//			frog = new Frog(this);
-//
-//			// Non player frogs should be drawn under the player
-//			sc = new SpriteComponent(frog, 125);
-//			sc.setTexture(texture);
-//			sc.setSize(30, 23);
-//			frog.setSprite(sc);
-//			frog.setMove(null);  // Frog does not move based off of this players input
-//
-//			// Extract Vector2 data from JsonValue
-//			Vector2 vector2 = new Vector2();
-//			vector2.x = entry.asFloat();
-//			vector2.y = entry.next.asFloat();
-//			frog.setPosition(vector2);
-//
-//			mPlayers.add(frog);
-//		}
-//		debug("Initialized all of the other frogs");  // DEBUG
-//		
-//		// Wait for the command to start the game
-//		while(messageFromServer.size == 0 || !messageFromServer.first().getCommand().equals("start")){
-//			// Message does not have the other frogs positions, discard it
-//			if(messageFromServer.size != 0) {
-//				messageFromServer.removeFirst();
-//			}
-//		}
-//		messageFromServer.removeFirst();
-//		debug("EVERYTHING HAS LOADED");  // DEBUG
+		}
 	}
-
+	
 	/**
 	 * Unloads data relevant to the game
 	 */
@@ -708,29 +648,25 @@ public class Game extends ApplicationAdapter
 	 * Create the listener(s) the client needs for server communication
 	 * @param gameSocket GameSocket to create the listener(s) for
 	 */
-	private void createListeners(Websocket gameSocket) {
+	/*
+	private void createListeners(GameSocket gameSocket) {
 		// This listener manages the passing of game variables
-		gameSocket.addListener(new WebsocketListener() {
+		gameSocket.addListener(new GameSocketListener() {
 
 		    @Override
 		    public void onClose(CloseEvent event) {
-			    // do something on close
 		    }
 
 		    @Override
 		    public void onMessage(String msg) {
-		        // a message is received
-		    	Game.addQueue(msg);
-		    	
 		    }
 
 		    @Override
 		    public void onOpen() {
-		        // do something on open
 		    }
 		});
 	}
-	
+	*/
 	//////////////////////////////// SETTERS/GETTERS ////////////////////////////////
 	
 	/**
@@ -746,7 +682,7 @@ public class Game extends ApplicationAdapter
 	 * Removes an Actor from mActors
 	 * @param actor Actor to remove
 	 */
-	public void removeActor(Actor actor)
+	public void removeActor(Actor actor) 
 	{
 		mActors.removeValue(actor, true);
 	}
@@ -770,22 +706,6 @@ public class Game extends ApplicationAdapter
 		mSprites.removeValue(sprite, true);
 	}
 	
-	public static void addQueue(String message) {
-		Json json = new Json();
-		debug("In addQueue");
-		debug("Data: " + json.prettyPrint(message));
-		GameDataJSON data = json.fromJson(GameDataJSON.class, message);
-		debug("Loaded in data");
-		messageFromServer.addLast(data);
-		debug("Added data to queue");
-	}
-	
-	public Websocket getGameSocket() {
-		return gameSocket;
-	}
-	
-	private static native void debug(String alert) /*-{
-		alert(alert);
-	}-*/;
+	public Array<Actor> getActors() { return mActors; }
 	
 }
