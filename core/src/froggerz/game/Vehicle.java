@@ -6,5 +6,8 @@ public class Vehicle extends Actor{
 		super(game);
 		
 		mMoveComp = new MoveComponent(this);
+		
+		mCollComp = new CollisionComponent(this);
+		mCollComp.SetSize(43, 28);
 	}
 }

@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Actor 
 {
-	private transient Game mGame = null;
-	private transient State mState = State.EActive;
+	private Game mGame = null;
+	private State mState = State.EActive;
 	private Vector2 mPosition = Vector2.Zero;
 	private float mRotation = 0.0f;
 	private float mScale = 1.0f;
@@ -133,9 +133,13 @@ public class Actor
 	public void setSprite(SpriteComponent sprite) { mSpriteComp = sprite; }
 	public MoveComponent getMove() { return mMoveComp; }
 	public void setMove(MoveComponent move) { mMoveComp = move; }
+	public CollisionComponent getCollision() { return mCollComp; }
 	public State getState() { return mState; }
 	public void setState(State state) { mState = state; }
 	public Game getGame() { return mGame; }
 	public final float getScale() { return mScale; }
 	public void setScale(float scale) { mScale = scale; }
+	private Vector2 mStartPos;
+	public void setStartPos(Vector2 start) { mStartPos = start; }
+	public Vector2 getStartPos() { return mStartPos; }
 }

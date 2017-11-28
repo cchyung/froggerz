@@ -3,7 +3,6 @@ package froggerz.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Json;
 import com.esotericsoftware.kryonet.Client;
 
 import froggerz.game.Buttons.PressableButton;
@@ -14,8 +13,6 @@ import froggerz.jsonobjects.ButtonsJSON;
  */
 public class FrogMove extends MoveComponent
 {
-	Json json;
-	
 	//Keep track of which button was pushed last, so we know which direction we need to turn
 	boolean leftPushed = false;
 	boolean rightPushed = false;
@@ -28,7 +25,6 @@ public class FrogMove extends MoveComponent
 	public FrogMove(Actor owner)
 	{
 		super(owner);
-		json = new Json();
 	}
 	
 	@Override

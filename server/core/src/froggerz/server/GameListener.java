@@ -48,6 +48,9 @@ public class GameListener extends Listener {
 		if (object instanceof ButtonsJSON) {
 			connectedPlayers.get(connection).passMessage(connection, (ButtonsJSON)object);
 		}
+		if (object instanceof PositionPacket) {
+			connectedPlayers.get(connection).setPlayerPosition((PositionPacket)object);
+		}
 	}
 
 	public void disconnected(Connection c){

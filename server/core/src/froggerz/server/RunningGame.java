@@ -190,13 +190,19 @@ public class RunningGame extends Thread {
 		Player newPlayer = new Player(numPlayers, connection);
 		newPlayer.setPosition((numPlayers+1) * 160.0f, 32.0f);
 		players.put(connection.getID(), newPlayer);
-		startingPosition.put(connection.getID(), new Vector2((numPlayers+1) * 160.0f, 32.0f));
+		//startingPosition.put(connection.getID(), new Vector2((numPlayers+1) * 160.0f, 32.0f));
 		numPlayers++;
 		//System.out.println("Added player");
 		if(gameFull()) {
 			System.out.println("Last player added, starting game");
 			GameListener.executors.execute(this);  // Start the game
 		}
+	}
+	
+	public void setPlayerPosition(PositionPacket posPack) {
+		Vector2 temp = new Vector2();
+		temp.fromString(posPack.vector2);
+		players.get(posPack.playerNum).setPosition(temp.x,temp.y);
 	}
 	
 	public boolean gameFull() {

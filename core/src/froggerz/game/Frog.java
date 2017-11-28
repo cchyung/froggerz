@@ -10,6 +10,8 @@ public class Frog extends Actor{
 		super(game);
 		
 		mMoveComp = new FrogMove(this);
+		mCollComp = new FrogCollide(this);
+		mCollComp.SetSize(30, 23);
 	}
 	
 	
