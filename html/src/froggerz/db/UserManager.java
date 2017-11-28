@@ -8,8 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.corba.se.spi.orbutil.fsm.Guard.Result;
-
 public class UserManager {
 	// List of users in the current game
 	private List<User> mUsers;

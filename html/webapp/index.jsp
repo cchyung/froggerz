@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <title>FROGGERZ: Log-In</title>
-<link rel="stylesheet" type="text/css" href="css/login.scss">
 <link rel="stylesheet" type="text/css" href="css/login.css">
 </head>
 <body>
@@ -21,20 +20,8 @@
             <input type="password" name="password"  placeholder="password"/>
             <input type="submit" value="Log-in"/>
         </form>
-        <form action="guestTown" class="guest-form">
-            <input type="submit" value="Continue as Guest"/>
-        </form>
         <button class="signIn" onclick="formSwitch()">Already Registered? <br><b>Sign in</b></button>
         <button class="createAccount" onclick="formSwitch()">New User?<br><b>Create an Account</b></button>
-        
-        <!-- Purpose: Easy access to the game for testing --> 
-        <div id="testGame">
-	        <br />
-	        	<form action="testGame.html">
-	        		<input type="submit" value="Test Game" />
-	        	</form>
-	        <br />
-        </div>
         
     </div>
 </div>

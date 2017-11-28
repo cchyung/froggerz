@@ -75,26 +75,21 @@
 		 -->
 		<div class="buttons" class="row">
 			<div class="col-xs-3">
-				<button class="saveAndQuit" onclick="changePage(1)">Quit</button>
+				<button class="saveAndQuit" onclick="quit()">Quit</button>
 			</div>
 
 			<div class="col-xs-3">
-				<button class="leaderboard" onclick="changePage(3)">Check
-					Leaderboard</button>
+				<form class="login-form" method="POST" action="GetLeaderboard">
+					<input type="submit" value="Check Leaderboard" />
+				</form>
 			</div>
 		</div>
 	</div>
 	<script
 		src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script>
-		function changePage(x) {
-			if (x === 1) {
-				document.location.href = "./index.jsp?message=";
-			} else if (x === 2) {
-				document.location.href = "./game.jsp";
-			} else{
-				document.location.href = "./leaderboard.jsp";
-			}
+		function quit() {
+			document.location.href = "./index.jsp?message=";
 		}
 	</script>
 </body>
