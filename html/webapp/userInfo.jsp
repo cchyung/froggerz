@@ -79,24 +79,6 @@
 			</div>
 
 			<div class="col-xs-3">
-				<button class="joinGame" onclick="changePage(2)">Join Game</button>
-			</div>
-
-			<div class="col-xs-3">
-				<button class="leaderboard" onclick="changePage(3)">Check
-					Leaderboard</button>
-			</div>
-		</div>
-		<div class="buttons" class="row">
-			<div class="col-xs-3">
-				<button class="saveAndQuit" onclick="changePage(1)">Quit</button>
-			</div>
-
-			<div class="col-xs-3">
-				<button class="joinGame" onclick="changePage(2)">Join Game</button>
-			</div>
-
-			<div class="col-xs-3">
 				<button class="leaderboard" onclick="changePage(3)">Check
 					Leaderboard</button>
 			</div>

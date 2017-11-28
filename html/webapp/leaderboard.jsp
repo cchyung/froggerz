@@ -13,6 +13,7 @@
 
 <body>
 	<div class="container-fluid" id="leaderboard">
+	size = ${users.size()}
 		<c:forEach items="${users}" var="entry" varStatus="loop">
 			<div class="row">
 				<div class="col-xs-4">
@@ -35,11 +36,19 @@
 				<button class="saveAndQuit" onclick="changePage(1)">Quit</button>
 			</div>
 			<div class="col-xs-2"></div>
-			<div class="col-xs-4">
-				<button class="joinGame" onclick="changePage(2)">Join Game</button>
-			</div>
 			<div class="col-xs-2"></div>
 		</div>
 	</div>
+	<script>
+	function changePage(x) {
+		if (x === 1) {
+			document.location.href = "./index.jsp?message=";
+		} else if (x === 2) {
+			document.location.href = "./game.jsp";
+		} else{
+			document.location.href = "./leaderboard.jsp";
+		}
+	}
+	</script>
 </body>
 </html>
