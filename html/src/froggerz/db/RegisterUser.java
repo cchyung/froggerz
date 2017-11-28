@@ -14,55 +14,28 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/Register")
-public class RegisterUser extends HttpServlet {
+public class RegisterUser extends HttpServlet
+{
 	public static final long serialVersionUID = 2;
 
-	protected void service(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+	protected void service(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException
+	{
 		final String inputtedName = request.getParameter("username");
 		final String inputtedPassword = request.getParameter("password");
-		Connection conn = null;
-		Statement st = null;
-		ResultSet rs = null;
-		boolean empty = true;
+		User user = UserManager.signup(inputtedName, inputtedPassword);
 
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager
-					.getConnection("jdbc:mysql://localhost/LoginInformation?user=root&password=root&useSSL=false");
-			st = conn.createStatement();
-			rs = st.executeQuery("SELECT * from Users where username='" + inputtedName + "'");
-
-			while (rs.next()) {
-				empty = false;
-			}
-		} catch (SQLException sqle) {
-			System.out.println(sqle.getMessage());
-		} catch (ClassNotFoundException cnfe) {
-			System.out.println(cnfe.getMessage());
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (st != null) {
-					st.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException sqle) {
-				System.out.println(sqle.getMessage());
-			}
+		if (user != null)
+		{
+			request.setAttribute("user",user);
+			request.getRequestDispatcher("/userInfo.jsp").forward(request,
+					response);
 		}
-
-		if (empty) {
-			request.setAttribute("user", UserManager.signup(inputtedName, inputtedPassword));
-			request.getRequestDispatcher("/userInfo.jsp").forward(request, response);
-		}
-		else {
+		else
+		{
 			request.setAttribute("message", "Username is already in use");
-			request.getRequestDispatcher("/index.jsp").forward(request, response);
+			request.getRequestDispatcher("/index.jsp").forward(request,
+					response);
 		}
 
 		// RequestDispatcher dispatcher =
