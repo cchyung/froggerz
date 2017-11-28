@@ -47,7 +47,21 @@ public class Player{
 	 */
 	public void processMessage(ButtonsJSON message) {
 		PressableButton button = message.buttonPushed();
-		buttonsPressed.add(button);
+		System.out.println(button);
+		synchronized(position) {
+			if(button == PressableButton.LEFT) {
+				position.x += -32.0f;
+			}
+			else if(button == PressableButton.RIGHT) {
+				position.x += 32.0f;
+			}
+			else if(button == PressableButton.UP) {
+				position.y += 32.0f;
+			}
+			else if(button == PressableButton.DOWN) {
+				position.y += -32.0f;
+			}
+		}
 	}
 	
 	/**
@@ -64,8 +78,10 @@ public class Player{
 	}
 	
 	public void setPosition(float x, float y) {
-		position.x = x;
-		position.y = y;
+		synchronized(position) {
+			position.x = x;
+			position.y = y;
+		}
 	}
 	
 	public Vector2 getPosition() {

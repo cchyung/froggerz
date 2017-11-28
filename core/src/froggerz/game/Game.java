@@ -62,6 +62,7 @@ public class Game extends ApplicationAdapter
 	// Holds all actors in the game
 	private Array<Actor> mActors;
 	private Array<Actor> mPlayers;  // Players in the game exluding this player
+	private Array<Vector2> mPositions;
 	private Array<SpriteComponent> mSprites;
 	
 	private SpriteBatch batch;
@@ -90,6 +91,7 @@ public class Game extends ApplicationAdapter
 	{
 		mActors = new Array<Actor>();
 		mPlayers = new Array<Actor>();
+		mPositions = new Array<Vector2>();
 		mSprites = new Array<SpriteComponent>();
 		
 		batch = new SpriteBatch();
@@ -127,7 +129,8 @@ public class Game extends ApplicationAdapter
 //		
 		kryo.register(PositionPacket.class, 1);
 	    kryo.register(ButtonsJSON.class, 2);
-	    kryo.register(GameDataJSON.class, new Serializer<GameDataJSON>() {
+	    kryo.register(GameDataJSON.class, 3);
+	    		/*, new Serializer<GameDataJSON>() {
 	    	{
 	    		setAcceptsNull(true);
 	    	}
@@ -165,35 +168,40 @@ public class Game extends ApplicationAdapter
 	    		data.setPositions(array);
 	    		return data;
 	    	}
-	    }, 3);
-		
+	    }, 3);*/
+
 	    // Listener for the server
-		client.addListener(new Listener() {
-		       public void received (Connection connection, Object object) {
-		    	   System.out.println("Received message from server");
-		          if (object instanceof GameDataJSON) {
-		        	  System.out.println("Object is GameData");
-		        	  GameDataJSON response = (GameDataJSON)object;
-		        	  System.out.println("Casted to GameData");
-		        	  addQueue(response);
-		        	  System.out.println("Received: " + response.getCommand());
-		          }
-		          if (object instanceof PositionPacket) {
-		        	  System.out.println("Object is PositionPacket");
-		        	  PositionPacket response = (PositionPacket)object;
-		        	  System.out.println("Casted to PositionPacket");
-		        	  addQueue(response);
-		        	  System.out.println("");
-		        	  System.out.println("Received vector2: " + response.vector2);
-		        	  System.out.println("Received playerNum: " + response.playerNum);
-		          }
-		       }
-		    });
-		
-		loadData();
-		
+	    client.addListener(new Listener() {
+	    	public void received (Connection connection, Object object) {
+	    		System.out.println("Received message from server");
+	    		if (object instanceof GameDataJSON) {
+	    			System.out.println("Object is GameData");
+	    			GameDataJSON response = (GameDataJSON)object;
+	    			System.out.println("Casted to GameData");
+	    			addQueue(response);
+	    			System.out.println("Received: " + response.command + "\n");
+	    		}
+	    		if (object instanceof PositionPacket) {
+	    			//System.out.println("Object is PositionPacket");
+	    			PositionPacket response = (PositionPacket)object;
+	    			//System.out.println("Casted to PositionPacket");
+	    			addQueue(response);
+	    			//System.out.println("");
+	    			//System.out.println("Received vector2: " + response.vector2);
+	    			//System.out.println("Received playerNum: " + response.playerNum);
+	    		}
+	    	}
+
+	    	public void disconnected(Connection c){
+	    		exitGame();
+	    	}
+
+	    });
+
+	    loadData();
+
 		// Game setup is over, process frogPositions
-		createServerProcesser();
+		//createServerProcesser();
 	}
 	
 	/**
@@ -242,6 +250,23 @@ public class Game extends ApplicationAdapter
 	 */
 	private void processInput() 
 	{
+		// Process up to 5 requests from the server
+		int numRequests = 0;
+		while(messageFromServer.size != 0 && numRequests < 100) {
+			Object data = messageFromServer.removeFirst();
+			if(data instanceof GameDataJSON) {
+				GameDataJSON gameData = (GameDataJSON)data;
+				if(gameData != null && gameData.command == 3) {
+					System.out.println("Position updating frog to: " + new Vector2(gameData.x1, gameData.y1) + "\n");
+					mPlayers.get(0).setPosition(new Vector2(gameData.x1, gameData.y1));
+				}
+//				else if() {  // Process game over
+//					
+//				}
+			}
+			numRequests++;
+		}
+		
 		
 		// Process input for all actors
 		for(Actor actor : mActors) 
@@ -272,7 +297,7 @@ public class Game extends ApplicationAdapter
 		for (Actor actor : copyActors)
 		{
 			actor.update(deltaTime);
-		}
+		}		
 		
 		// Get dead actors
 		Array<Actor> deadActors = new Array<Actor>();
@@ -661,21 +686,16 @@ public class Game extends ApplicationAdapter
 				}	
 			}
 		}  // End level loading from file
-
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		System.out.println("Waiting for first postion");
 		// Wait to receive this players position from the server
-		while(true){
-			if(messageFromServer.size == 0) {
-				continue;
-			}
-			Object data = messageFromServer.first();
-			System.out.println("Getting data from queue");
-			if (data instanceof GameDataJSON) {
-				messageFromServer.removeFirst();
-			}
-			else {
-				break;  // Received first position packet
-			}
+		while(messageFromServer.size == 0){
 		}
 		System.out.println("Got first position");
 		PositionPacket dataFromServer = (PositionPacket)messageFromServer.removeFirst();
@@ -698,22 +718,20 @@ public class Game extends ApplicationAdapter
 		// Wait to receive the positions of other frogs
 		while(messageFromServer.size == 0){
 			try {
-				Thread.sleep(250);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-					
-			System.out.println(messageFromServer.size);
 		}
 		
 		GameDataJSON dataFromServer2 = (GameDataJSON)messageFromServer.removeFirst();
-
+		Array<Vector2> frogPositions = new Array<Vector2>();
+		frogPositions.add(new Vector2(dataFromServer2.x1, dataFromServer2.y1));
 		// Create a new frog for each Vector2 in the JsonValue
-		Array<Vector2> frogPositions = dataFromServer2.getPositions();
 		for (Vector2 position : frogPositions) {
 			texture = manager.get("frog classic.png", Texture.class);
-			frog = new Frog(this);
+			frog = new Actor(this);
 
 			// Non player frogs should be drawn under the player
 			sc = new SpriteComponent(frog, 125);
@@ -730,12 +748,11 @@ public class Game extends ApplicationAdapter
 		// Wait for the command to start the game
 		while(messageFromServer.size == 0){
 			try {
-				Thread.sleep(250);
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println(messageFromServer.size);
 		}
 		messageFromServer.removeFirst();
 		
@@ -764,7 +781,8 @@ public class Game extends ApplicationAdapter
 					GameDataJSON dataFromServer = null;
 					// What kind of data was sent from the server
 					if(messageFromServer.size != 0) {
-						if(messageFromServer.first() instanceof GameDataJSON && ((GameDataJSON)messageFromServer.first()).getCommand() == 3) {
+						System.out.println("In processor, queue size: " + messageFromServer.size);
+						if(messageFromServer.first() instanceof GameDataJSON && ((GameDataJSON)messageFromServer.first()).command == 3) {
 							dataFromServer = (GameDataJSON)messageFromServer.removeFirst();
 						}
 						else {
@@ -772,35 +790,42 @@ public class Game extends ApplicationAdapter
 							continue;
 						}
 					}
+					else {
+						Thread.yield();
+						continue;
+					}
 					// TODO What to do when the game is over
 //					else if(dataFromServer.getCommand().equals("gameOver")) {
 //			
 //					}
 					
 					// Positions for frogs
-					Array<Vector2> frogPositions;
-					if(dataFromServer != null && dataFromServer.getCommand() == 3) {
-						frogPositions = dataFromServer.getPositions();
-						int currentFrog = 0;
-						for (Vector2 position : frogPositions) {
-							// Make sure the game isn't trying to draw the this frog
-							mPlayers.get(currentFrog).setPosition(position);
-							++currentFrog;
-						}
+					final Array<Vector2> frogPositions;
+					if(dataFromServer != null && dataFromServer.command == 3) {
+						frogPositions = new Array<Vector2>();
+						frogPositions.add(new Vector2(dataFromServer.x1, dataFromServer.y1));
+						System.out.println("Got updated positions" + "\n");
+					}
+					else {
+						continue;
 					}
 					
 					// this will be run on the application listener thread
 					// before the next call to ApplicationListener#render()
-//					Gdx.app.postRunnable(new Runnable() {
-//						@Override
-//						public void run() {
-//							
-//							Gdx.app.log("ThreadingExample", "i come in peace");
-//						}
-//					});
+					Gdx.app.postRunnable(new Runnable() {
+						@Override
+						public void run() {
+							setPositions(frogPositions);
+							System.out.println("Posted new positions" + "\n");
+						}
+					});
 				}
 			}
 		}).start();
+	}
+	
+	public void setPositions(Array<Vector2> positions) {
+		mPositions = positions;
 	}
 	
 	/**
@@ -810,8 +835,9 @@ public class Game extends ApplicationAdapter
 	private void exitGame() 
 	{
 		// TODO
-		dispose();
-		Gdx.app.exit();
+		System.exit(0);
+//		dispose();
+//		Gdx.app.exit();
 	}
 	
 	//////////////////////////////// SETTERS/GETTERS ////////////////////////////////

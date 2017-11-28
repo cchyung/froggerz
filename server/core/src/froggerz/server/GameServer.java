@@ -57,7 +57,8 @@ public class GameServer extends ApplicationAdapter {
 //		});
 		kryo.register(PositionPacket.class, 1);
 	    kryo.register(ButtonsJSON.class, 2);
-	    kryo.register(GameDataJSON.class, new Serializer<GameDataJSON>() {
+	    kryo.register(GameDataJSON.class, 3);
+	    /*kryo.register(GameDataJSON.class, new Serializer<GameDataJSON>() {
 	    	{
 	    		setAcceptsNull(true);
 	    	}
@@ -95,7 +96,7 @@ public class GameServer extends ApplicationAdapter {
 	    		data.setPositions(array);
 	    		return data;
 	    	}
-	    }, 3);
+	    }, 3);*/
 		
 		server.addListener(new GameListener(server));
 		

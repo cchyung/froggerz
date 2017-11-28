@@ -51,7 +51,7 @@ public class RunningGame extends Thread {
 			server.sendToTCP(sendToPlayer.getKey(), data);
 		}
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(4000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -61,7 +61,7 @@ public class RunningGame extends Thread {
 		updateGame();
 		
 		try {
-			Thread.sleep(3000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -69,15 +69,8 @@ public class RunningGame extends Thread {
 		
 		// Send signal to start the game
 		GameDataJSON data = new GameDataJSON();
-		data.setCommand(1);
+		data.command = 1;
 		broadcast(data);
-		
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 		//currentTime += Gdx.graphics.getDeltaTime();
 		System.out.println("About to enter gameOver loop");
@@ -96,55 +89,79 @@ public class RunningGame extends Thread {
 		
 		// Wait 1 second
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(250);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		System.out.println("Game " + gameNumber + ": Updating positions of players");
+		System.out.println("Game " + gameNumber + ": Updating positions of players" + "\n");
 		// Iterate through all players
-		for (Map.Entry<Integer, Player> entry : players.entrySet()) { 
-			Player player = entry.getValue();
-			Vector2 position = player.getPosition();
-			
-			// Process all buttons the player pressed
-			ArrayList<PressableButton> buttonSequence = player.getButtonsPressed();
-			for(PressableButton button : buttonSequence) {
-				if(button == PressableButton.LEFT) {
-					position.x += -32.0f;
-				}
-				else if(button == PressableButton.RIGHT) {
-					position.x += 32.0f;
-				}
-				else if(button == PressableButton.UP) {
-					position.y += 32.0f;
-				}
-				else if(button == PressableButton.DOWN) {
-					position.y += -32.0f;
-				}
-				
-				player.setPosition(position.x, position.y);
+//		for (Map.Entry<Integer, Player> entry : players.entrySet()) { 
+//			Player player = entry.getValue();
+//			Vector2 position = player.getPosition();
+//			
+//			// Process all buttons the player pressed
+//			ArrayList<PressableButton> buttonSequence = player.getButtonsPressed();
+//			System.out.println("Number of buttons to process: " + buttonSequence.size());
+//			for(PressableButton button : buttonSequence) {
+//				if(button == PressableButton.LEFT) {
+//					position.x += -32.0f;
+//				}
+//				else if(button == PressableButton.RIGHT) {
+//					position.x += 32.0f;
+//				}
+//				else if(button == PressableButton.UP) {
+//					position.y += 32.0f;
+//				}
+//				else if(button == PressableButton.DOWN) {
+//					position.y += -32.0f;
+//				}
+//				
+//				player.setPosition(position.x, position.y);
 				
 				// TODO Check to see if finishline was hit at this move
 //				if() {
 //					gameOver = true;
 //					return;
 //				}
-			}
-		}
+//			}
+//		}
 
 		// Send positions of players to other players
 		for (Map.Entry<Integer, Player> sendToPlayer : players.entrySet()) {
 			GameDataJSON data = new GameDataJSON();
-			data.setCommand(3);
-			for (Map.Entry<Integer, Player> playerToSend : players.entrySet()) { 
+			data.command = 3;
+			int whichFrog = 0;
+			for (Map.Entry<Integer, Player> playerToSend : players.entrySet()) {
 				// Don't send the position of this player to 
-				if(sendToPlayer.getKey() != playerToSend.getKey()) {
-					data.addPosition(playerToSend.getValue().getPosition());
-				}	
+				if(sendToPlayer.getValue().getPlayerNum() != playerToSend.getValue().getPlayerNum()) {
+					//System.out.println("Send to: " + sendToPlayer.getKey());
+					//System.out.println("Position to send: " + playerToSend.getKey());
+					Vector2 temp = playerToSend.getValue().getPosition();
+					//System.out.println("Position sending: " + temp.toString());
+					switch(whichFrog) {
+						case 0:
+							data.x1 = temp.x;
+							data.y1 = temp.y;
+							break;
+						case 1:
+							data.x2 = temp.x;
+							data.y2 = temp.y;
+							break;
+						case 2:
+							data.x3 = temp.x;
+							data.y3 = temp.y;
+							break;
+						case 3:
+							data.x4 = temp.x;
+							data.y4 = temp.y;
+							break;
+					}
+					whichFrog++;
+				}			
 			}
-			System.out.println("Sending update frogs to: " + sendToPlayer.getValue().getPlayerNum());
+			//System.out.println("Sending update frogs to: " + sendToPlayer.getValue().getPlayerNum() + "\n");
 			server.sendToTCP(sendToPlayer.getKey(), data);
 		}
 	}
@@ -173,11 +190,12 @@ public class RunningGame extends Thread {
 		Player newPlayer = new Player(numPlayers, connection);
 		newPlayer.setPosition((numPlayers+1) * 160.0f, 32.0f);
 		players.put(connection.getID(), newPlayer);
+		startingPosition.put(connection.getID(), new Vector2((numPlayers+1) * 160.0f, 32.0f));
 		numPlayers++;
 		//System.out.println("Added player");
 		if(gameFull()) {
 			System.out.println("Last player added, starting game");
-			this.start();  // Start the game
+			GameListener.executors.execute(this);  // Start the game
 		}
 	}
 	

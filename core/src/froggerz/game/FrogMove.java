@@ -202,9 +202,9 @@ public class FrogMove extends MoveComponent
 			else if(downPushed) {
 				buttons.downPushed();
 			}
+			
+			gameSocket.sendTCP(buttons);
 		}
-		
-		//gameSocket.sendTCP(buttons);
 	}
 	
 	@Override

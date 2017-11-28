@@ -46,8 +46,11 @@ public class ButtonsJSON {
 		else if(up) {
 			return PressableButton.UP;
 		}
-		else { //if(down) {
+		else if(down) {
 			return PressableButton.DOWN;
+		}
+		else {
+			return null;
 		}
 	}
 }

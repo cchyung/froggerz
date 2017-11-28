@@ -15,11 +15,11 @@ public class GameListener extends Listener {
 	private static RunningGame currentOpenGame = null;
 	private static ConcurrentHashMap<Connection, RunningGame> connectedPlayers = new ConcurrentHashMap<Connection, RunningGame>();
 	private static int gameNumber = 0;
-	private static ExecutorService executors = Executors.newCachedThreadPool();
-	private Server server;
+	public static ExecutorService executors = Executors.newCachedThreadPool();
+	private static Server server;
 
-	public GameListener(Server server) {
-		this.server = server;
+	public GameListener(Server server1) {
+		server = server1;
 	}
 	
 	public void connected(Connection connection) {
