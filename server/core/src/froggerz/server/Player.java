@@ -1,5 +1,4 @@
 package froggerz.server;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,13 +14,14 @@ public class Player{
 	private int playerNum;
 	private Connection connection;
 	private List<PressableButton> buttonsPressed;
-	private Vector2 position = Vector2.Zero;
+	private Vector2 position;
 	
 	public Player(int playerNum, Connection connection) {
 		this.playerNum = playerNum;
 		this.buttonsPressed = new ArrayList<PressableButton>();
 		buttonsPressed = Collections.synchronizedList(buttonsPressed);
 		this.connection = connection;
+		position = new Vector2();
 	}
 	
 	/**

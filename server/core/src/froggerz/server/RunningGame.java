@@ -137,6 +137,8 @@ public class RunningGame extends Thread {
 			for (Map.Entry<Integer, Player> playerToSend : players.entrySet()) {
 				// Don't send the position of this player to 
 				if(sendToPlayer.getValue().getPlayerNum() != playerToSend.getValue().getPlayerNum()) {
+					//System.out.println("This player: " + sendToPlayer.getValue().getPlayerNum());
+					//System.out.println("Is not equal to: " + playerToSend.getValue().getPlayerNum() + "\n");
 					//System.out.println("Send to: " + sendToPlayer.getKey());
 					//System.out.println("Position to send: " + playerToSend.getKey());
 					Vector2 temp = playerToSend.getValue().getPosition();
