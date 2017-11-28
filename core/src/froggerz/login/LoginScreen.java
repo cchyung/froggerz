@@ -54,6 +54,8 @@ public class LoginScreen implements Screen {
 	    stage.draw();
 	    
 	    if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+	    	
+	    	
 			game.setScreen(new FroggerzGame(game));
 			dispose();
 		}
