@@ -18,7 +18,7 @@ public class FrogCollide extends CollisionComponent
 		boolean onFloaty = false;
 		
 		//Handling finish line collision
-		if (mOwner.getPosition().y >= 448)
+		if (mOwner.getPosition().y >= 832)
 		{
 			System.out.println("End");
 			
@@ -142,7 +142,8 @@ public class FrogCollide extends CollisionComponent
 		}
 		
 		//Handling water collision
-		if (!onFloaty && mOwner.getPosition().y >= 256.0 && mOwner.getPosition().y <= 288.0 + 32)
+		if (!onFloaty && ((mOwner.getPosition().y >= 256.0 && mOwner.getPosition().y <= 288.0 + 32)) || 
+				(mOwner.getPosition().y >= 544.0 && mOwner.getPosition().y <= 576.0 + 32))
 		{
 			mOwner.setPosition(new Vector2(mOwner.getStartPos()));
 			gotReset = true;

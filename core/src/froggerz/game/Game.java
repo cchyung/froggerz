@@ -451,7 +451,23 @@ public class Game extends ApplicationAdapter
 							{
 								lane3.addVehicleToLane(car);
 							}
-							else
+							
+							else if (car.getPosition().y >= 416 && car.getPosition().y <= 428)
+							{
+								lane4.addVehicleToLane(car);
+							}
+							
+							else if (car.getPosition().y >= 704 && car.getPosition().y <= 716)
+							{
+								lane4.addVehicleToLane(car);
+							}
+							
+							else if (car.getPosition().y >= 736 && car.getPosition().y <= 748)
+							{
+								lane3.addVehicleToLane(car);
+							}
+							
+							else if (car.getPosition().y >= 768 && car.getPosition().y <= 780)
 							{
 								lane4.addVehicleToLane(car);
 							}
@@ -484,7 +500,23 @@ public class Game extends ApplicationAdapter
 							{
 								lane3.addVehicleToLane(car);
 							}
-							else
+							
+							else if (car.getPosition().y >= 416 && car.getPosition().y <= 428)
+							{
+								lane4.addVehicleToLane(car);
+							}
+							
+							else if (car.getPosition().y >= 704 && car.getPosition().y <= 716)
+							{
+								lane4.addVehicleToLane(car);
+							}
+							
+							else if (car.getPosition().y >= 736 && car.getPosition().y <= 748)
+							{
+								lane3.addVehicleToLane(car);
+							}
+							
+							else if (car.getPosition().y >= 768 && car.getPosition().y <= 780)
 							{
 								lane4.addVehicleToLane(car);
 							}
@@ -517,7 +549,23 @@ public class Game extends ApplicationAdapter
 							{
 								lane3.addVehicleToLane(car);
 							}
-							else
+							
+							else if (car.getPosition().y >= 416 && car.getPosition().y <= 428)
+							{
+								lane4.addVehicleToLane(car);
+							}
+							
+							else if (car.getPosition().y >= 704 && car.getPosition().y <= 716)
+							{
+								lane4.addVehicleToLane(car);
+							}
+							
+							else if (car.getPosition().y >= 736 && car.getPosition().y <= 748)
+							{
+								lane3.addVehicleToLane(car);
+							}
+							
+							else if (car.getPosition().y >= 768 && car.getPosition().y <= 780)
 							{
 								lane4.addVehicleToLane(car);
 							}
@@ -562,9 +610,19 @@ public class Game extends ApplicationAdapter
 								river1.addThingToRiver(log);
 							}
 
-							else
+							else if (log.getPosition().y >= 288 && log.getPosition().y <= 300)
 							{
 								river2.addThingToRiver(log);
+							}
+							
+							else if (log.getPosition().y >= 544 && log.getPosition().y <= 556)
+							{
+								river2.addThingToRiver(log);
+							}
+							
+							else if (log.getPosition().y >= 576 && log.getPosition().y <= 588)
+							{
+								river1.addThingToRiver(log);
 							}
 						}
 						else if (levelChar == 'A')
@@ -615,9 +673,19 @@ public class Game extends ApplicationAdapter
 								river1.addThingToRiver(gator);
 							}
 
-							else
+							else if (gator.getPosition().y >= 288 && gator.getPosition().y <= 300)
 							{
 								river2.addThingToRiver(gator);
+							}
+							
+							else if (gator.getPosition().y >= 544 && gator.getPosition().y <= 556)
+							{
+								river2.addThingToRiver(gator);
+							}
+							
+							else if (gator.getPosition().y >= 576 && gator.getPosition().y <= 588)
+							{
+								river1.addThingToRiver(gator);
 							}
 						}
 
