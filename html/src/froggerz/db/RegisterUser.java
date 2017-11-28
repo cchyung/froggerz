@@ -12,7 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+ 
 @WebServlet("/Register")
 public class RegisterUser extends HttpServlet
 {
@@ -31,15 +31,11 @@ public class RegisterUser extends HttpServlet
 			request.getRequestDispatcher("/userInfo.jsp").forward(request,
 					response);
 		}
-		else
+		else 
 		{
 			request.setAttribute("message", "Username is already in use");
 			request.getRequestDispatcher("/index.jsp").forward(request,
 					response);
 		}
-
-		// RequestDispatcher dispatcher =
-		// getServletContext().getRequestDispatcher("/test.jsp");
-		// dispatcher.forward(request, response);
 	}
 }

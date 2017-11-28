@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-
+ 
 public class UserManager
 {
 	// List of users in the current game
@@ -241,7 +241,7 @@ public class UserManager
 			if (rs.next())
 			{
 				lastID = rs.getInt("lastID");
-				++lastID;
+				++lastID; 
 			}
 
 			// VALUES: (id,username,password,wins)

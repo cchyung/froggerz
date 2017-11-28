@@ -10,8 +10,8 @@
 	${message}
     <div class="forms">
         <form action="Register" class="register-form">
-            <input type="text" placeholder="name"/>
-            <input type="password" placeholder="password"/>
+            <input type="text" name="username" placeholder="name"/>
+            <input type="password" name="password" placeholder="password"/>
             <input type="password" placeholder="confirm password"/>
             <input type="submit" value="Create Account"/>
         </form>
