@@ -13,23 +13,22 @@
 
 <body>
 	<div class="container-fluid" id="leaderboard">
-		size = ${users.size()}
-		<c:forEach items="${users}" var="entry" varStatus="loop">
-			<div class="row">
-				<div class="col-xs-4">${entry[0]}</div>
-				<div class="col-xs-4">${entry[1]}</div>
-				<div class="col-xs-4">${entry[2]}</div>
-			</div>
-		</c:forEach>
-	</div>
-	<div class="container-fluid" id="buttons">
-
+		<div class="forms">
+			<c:forEach items="${users}" var="entry" varStatus="loop">
+				<div class="row">
+					<div class="col-xs-4">${entry[0]}.</div>
+					<div class="col-xs-4">${entry[1]}</div>
+					<div class="col-xs-4">${entry[2]}</div>
+				</div>
+			</c:forEach>
+			<br>
 		<div id="buttons" class="row">
 			<div class="col-xs-4"></div>
 			<div class="col-xs-4">
 				<button class="saveAndQuit" onclick="quit()">Quit</button>
 			</div>
 			<div class="col-xs-4"></div>
+		</div>
 		</div>
 	</div>
 	<script>
