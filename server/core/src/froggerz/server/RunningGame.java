@@ -40,6 +40,7 @@ public class RunningGame extends Thread {
 	
 	public void run() {
 		// Send player start position
+		System.out.println("Number of players in the hashmap: " + players.size());
 		for (Map.Entry<Integer, Player> sendToPlayer : players.entrySet()) {
 			// Send position to the player
 			PositionPacket data = new PositionPacket();
@@ -187,7 +188,8 @@ public class RunningGame extends Thread {
 	
 	public void addPlayer(Connection connection) {	
 		//System.out.println("Adding player to game");
-		Player newPlayer = new Player(numPlayers, connection);
+		System.out.println("Adding player with id: " + connection.getID());
+		Player newPlayer = new Player(connection.getID(), connection);
 		newPlayer.setPosition((numPlayers+1) * 160.0f, 32.0f);
 		players.put(connection.getID(), newPlayer);
 		//startingPosition.put(connection.getID(), new Vector2((numPlayers+1) * 160.0f, 32.0f));

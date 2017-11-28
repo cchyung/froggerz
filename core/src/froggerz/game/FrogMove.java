@@ -227,9 +227,9 @@ public class FrogMove extends MoveComponent
 			changeY = -32.0f;
 		}
 		
-		Vector2 newPosition = mOwner.getPosition();
-		newPosition.x += changeX;
-		newPosition.y += changeY;
+		Vector2 newPosition = new Vector2(mOwner.getPosition().x + changeX, mOwner.getPosition().y + changeY);
+		//newPosition.x += changeX;
+		//newPosition.y += changeY;
 		mOwner.setPosition(newPosition);
 	}
 }

@@ -149,6 +149,7 @@ public class FrogCollide extends CollisionComponent
 		}
 		
 		if(gotReset) {
+			System.out.println("Collision happended");
 			Client gameSocket = mOwner.getGame().getClient();
 			PositionPacket data = new PositionPacket();
 			data.playerNum = mOwner.getGame().getPlayerNum();
